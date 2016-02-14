@@ -10,3 +10,19 @@
 
 # virtual machine crash logs, see http://www.java.com/en/download/help/error_hotspot.xml
 hs_err_pid*
+
+# compile folder
+/target/
+
+#netbeans configuration files
+nb-configuration.xml
+
+#eclipse configuration files and folder
+/.settings/
+.classpath
+.project
+
+#intellij idea configuration files and folder
+/out/
+/.idea/
+*.iml
