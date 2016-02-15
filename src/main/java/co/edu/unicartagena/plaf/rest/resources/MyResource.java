@@ -31,7 +31,7 @@ public class MyResource {
     @GET
     @Produces(MediaType.TEXT_PLAIN)
     public String test() {
-        return "Got it!";
+        return "This is web service of Cartagena University!";
     }
     
 }
