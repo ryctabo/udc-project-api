@@ -17,34 +17,61 @@ package co.edu.unicartagena.platf.entity;
 
 import java.util.ArrayList;
 import java.util.List;
+import javax.persistence.Column;
+import javax.persistence.ElementCollection;
+import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.Inheritance;
+import javax.persistence.InheritanceType;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
 
 /**
  *
- * @author Gustavo
- * @version 0.1
+ * @author Gustavo Pacheco <ryctabo@gmail.com>
+ * @version 0.2
  */
+@Entity(name = "UserEntity")
+@Inheritance(strategy = InheritanceType.JOINED)
 public class User implements IEntity {
     
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
     private int id;
     
+    @Column(length = 12, unique = true)
     private String username;
     
+    @Column(length = 50, unique = true, nullable = false)
     private String email;
     
+    @Column(length = 18, nullable = false)
     private String password;
     
+    @ElementCollection(targetClass = RoleType.class)
+    @JoinTable(name = "role", joinColumns = @JoinColumn(name = "user_id"))
+    @Column(name = "role_id")
+    @Enumerated(EnumType.ORDINAL)
     private List<RoleType> roles;
     
     private boolean enabled;
+    
+    private boolean deleted;
 
     public User() {
         this.roles = new ArrayList<>();
+        this.enabled = true;
     }
 
     public User(String email, String password) {
         this.email = email;
         this.password = password;
         this.roles = new ArrayList<>();
+        this.enabled = true;
     }
 
     public User(String username, String email, String password) {
@@ -52,6 +79,7 @@ public class User implements IEntity {
         this.email = email;
         this.password = password;
         this.roles = new ArrayList<>();
+        this.enabled = true;
     }
 
     public int getId() {
@@ -100,6 +128,14 @@ public class User implements IEntity {
 
     public void setEnabled(boolean enabled) {
         this.enabled = enabled;
+    }
+
+    public boolean isDeleted() {
+        return deleted;
+    }
+
+    public void setDeleted(boolean deleted) {
+        this.deleted = deleted;
     }
 
 }

@@ -15,11 +15,16 @@
  */
 package co.edu.unicartagena.platf.entity;
 
+import javax.persistence.Entity;
+import javax.persistence.PrimaryKeyJoinColumn;
+
 /**
  *
- * @author Gustavo Pacheco
+ * @author Gustavo Pacheco <ryctabo@gmail.com>
  * @version 1.0
  */
+@Entity
+@PrimaryKeyJoinColumn(referencedColumnName = "id")
 public class Person extends User {
     
     private String name;
@@ -35,6 +40,12 @@ public class Person extends User {
 
     public Person(String username, String email, String password) {
         super(username, email, password);
+    }
+
+    public Person(String name, String lastname, String email, String password) {
+        super(email, password);
+        this.name = name;
+        this.lastname = lastname;
     }
 
     public String getName() {

@@ -22,7 +22,7 @@ import javax.ws.rs.core.MediaType;
 
 /**
  *
- * @author Gustavo Pacheco
+ * @author Gustavo Pacheco <ryctabo@gmail.com>
  * @version 1.0
  */
 @Path("myresource")

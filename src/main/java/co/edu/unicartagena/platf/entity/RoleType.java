@@ -17,7 +17,7 @@ package co.edu.unicartagena.platf.entity;
 
 /**
  *
- * @author Gustavo Pacheco
+ * @author Gustavo Pacheco <ryctabo@gmail.com>
  * @version 1.0
  */
 public enum RoleType {

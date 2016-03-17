@@ -19,7 +19,7 @@ import java.io.Serializable;
 
 /**
  *
- * @author Gustavo Pacheco
+ * @author Gustavo Pacheco <ryctabo@gmail.com>
  * @version 1.0
  */
 public interface IEntity extends Serializable {}
