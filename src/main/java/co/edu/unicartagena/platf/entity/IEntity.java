@@ -13,25 +13,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package co.edu.unicartagena.plaf.rest.resources;
+package co.edu.unicartagena.platf.entity;
 
-import javax.ws.rs.GET;
-import javax.ws.rs.Path;
-import javax.ws.rs.Produces;
-import javax.ws.rs.core.MediaType;
+import java.io.Serializable;
 
 /**
  *
  * @author Gustavo Pacheco
  * @version 1.0
  */
-@Path("myresource")
-public class MyResource {
-    
-    @GET
-    @Produces(MediaType.TEXT_PLAIN)
-    public String test() {
-        return "This is web service of Cartagena University!";
-    }
-    
-}
+public interface IEntity extends Serializable {}

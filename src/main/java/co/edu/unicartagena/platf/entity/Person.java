@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package co.edu.unicartagena.plaf.entity;
+package co.edu.unicartagena.platf.entity;
 
 /**
  *
