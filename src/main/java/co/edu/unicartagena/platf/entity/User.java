@@ -17,6 +17,7 @@ package co.edu.unicartagena.platf.entity;
 
 import java.util.ArrayList;
 import java.util.List;
+
 import javax.persistence.Column;
 import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
@@ -29,6 +30,8 @@ import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
 
 /**
  *
@@ -37,6 +40,11 @@ import javax.persistence.JoinTable;
  */
 @Entity(name = "UserEntity")
 @Inheritance(strategy = InheritanceType.JOINED)
+@NamedQueries(value = {
+    @NamedQuery(name = "user.findByUsername", query = "select u from UserEntity u where u.username = :username"),
+    @NamedQuery(name = "user.findByEmail", query = "select u from UserEntity u where u.email = :email"),
+    @NamedQuery(name = "user.findByUsernameOrEmail", query = "select u from UserEntity u where u.username = :signIn or u.email = :signIn")
+})
 public class User implements IEntity {
     
     @Id
