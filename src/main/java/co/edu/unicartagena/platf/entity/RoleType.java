@@ -21,5 +21,5 @@ package co.edu.unicartagena.platf.entity;
  * @version 1.0
  */
 public enum RoleType {
-    ADMINISTRATOR, NORMAL_USER
+    ADMINISTRATOR, DEANCHIP, FACULTY, PROGRAM
 }
