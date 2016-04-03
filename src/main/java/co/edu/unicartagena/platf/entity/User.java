@@ -16,6 +16,7 @@
 package co.edu.unicartagena.platf.entity;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import javax.persistence.Column;
@@ -23,6 +24,7 @@ import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -36,14 +38,15 @@ import javax.persistence.NamedQuery;
 /**
  *
  * @author Gustavo Pacheco <ryctabo@gmail.com>
- * @version 0.2
+ * @version 1.0-SNAPSHOT
  */
 @Entity(name = "UserEntity")
 @Inheritance(strategy = InheritanceType.JOINED)
 @NamedQueries(value = {
     @NamedQuery(name = "user.findByUsername", query = "select u from UserEntity u where u.username = :username"),
     @NamedQuery(name = "user.findByEmail", query = "select u from UserEntity u where u.email = :email"),
-    @NamedQuery(name = "user.findByUsernameOrEmail", query = "select u from UserEntity u where u.username = :signIn or u.email = :signIn")
+    @NamedQuery(name = "user.findByUsernameOrEmail", query = "select u from UserEntity u where u.username = :signIn or u.email = :signIn"),
+    @NamedQuery(name = "user.login", query = "select u from UserEntity u where (u.username = :login or u.email = :login) and u.password = :password and u.enabled = true and u.deleted = false")
 })
 public class User implements IEntity {
     
@@ -57,10 +60,10 @@ public class User implements IEntity {
     @Column(length = 50, unique = true, nullable = false)
     private String email;
     
-    @Column(length = 18, nullable = false)
+    @Column(length = 20, nullable = false)
     private String password;
     
-    @ElementCollection(targetClass = RoleType.class)
+    @ElementCollection(fetch = FetchType.EAGER, targetClass = RoleType.class)
     @JoinTable(name = "role", joinColumns = @JoinColumn(name = "user_id"))
     @Column(name = "role_id")
     @Enumerated(EnumType.ORDINAL)
@@ -122,6 +125,10 @@ public class User implements IEntity {
         this.password = password;
     }
 
+    public void addRoles(RoleType... roles) {
+        this.roles.addAll(Arrays.asList(roles));
+    }
+    
     public List<RoleType> getRoles() {
         return roles;
     }

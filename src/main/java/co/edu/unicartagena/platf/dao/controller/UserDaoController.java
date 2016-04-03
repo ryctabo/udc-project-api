@@ -29,7 +29,7 @@ import javax.persistence.TypedQuery;
 /**
  *
  * @author Gustavo Pacheco <ryctabo@gmail.com>
- * @version 0.1.0
+ * @version 0.4.0-SNAPSHOT
  */
 public class UserDaoController extends EntityDao<User, Integer> implements UserDao {
 
@@ -41,27 +41,39 @@ public class UserDaoController extends EntityDao<User, Integer> implements UserD
     }
 
     @Override
-    public User findUserByUsername(String username) throws UserNotFoundException,
-            NotCreatedEntityManagerException {
+    public User findUserByUsername(String username)
+            throws NotCreatedEntityManagerException {
         List<Parameter> parameters = Arrays.asList(new Parameter("username", username));
         String msg = String.format("The user with name %s was not found.", username);
         return executeNamedQuery(getEntityManager(), "user.findByUsername", parameters, msg);
     }
 
     @Override
-    public User findUserByEmail(String email) throws UserNotFoundException,
-            NotCreatedEntityManagerException {
+    public User findUserByEmail(String email)
+            throws NotCreatedEntityManagerException {
         List<Parameter> parameters = Arrays.asList(new Parameter("email", email));
         String errorMessage = String.format("The user with email %s was not found", email);
         return executeNamedQuery(getEntityManager(), "user.findByEmail", parameters, errorMessage);
     }
 
     @Override
-    public User findUserByUsernameOrEmail(String argument) throws UserNotFoundException,
-            NotCreatedEntityManagerException {
+    public User findUserByUsernameOrEmail(String argument)
+            throws NotCreatedEntityManagerException {
         List<Parameter> params = Arrays.asList(new Parameter("signIn", argument));
         String errorMeesage = "The username or email is not found";
         return executeNamedQuery(getEntityManager(), "user.findByUsernameOrEmail", params, errorMeesage);
+    }
+    
+    @Override
+    public boolean login(String usernameOrEmail, String password)
+            throws NotCreatedEntityManagerException {
+        List<Parameter> params = Arrays.asList(
+                new Parameter("login", usernameOrEmail),
+                new Parameter("password", password)
+        );
+        String errorMsg = "The username or password is not valid";
+        User user = executeNamedQuery(getEntityManager(), "user.login", params, errorMsg);
+        return user != null;
     }
 
     /**
@@ -77,7 +89,7 @@ public class UserDaoController extends EntityDao<User, Integer> implements UserD
      */
     private User executeNamedQuery(EntityManager entityManager, String namedQuery,
             List<Parameter> parameters, String errorMessage)
-            throws UserNotFoundException, NotCreatedEntityManagerException {
+            throws NotCreatedEntityManagerException {
         if (entityManager != null) {
             try {
                 TypedQuery<User> typedQuery = entityManager
@@ -86,10 +98,10 @@ public class UserDaoController extends EntityDao<User, Integer> implements UserD
                 for (Parameter parameter : parameters) {
                     typedQuery.setParameter(parameter.key, parameter.value);
                 }
-
+                
                 List<User> users = typedQuery.getResultList();
                 if (users.isEmpty()) {
-                    throw new UserNotFoundException(errorMessage);
+                    return null;
                 }
 
                 return users.iterator().next();

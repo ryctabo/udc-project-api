@@ -16,7 +16,9 @@
 package co.edu.unicartagena.platf.dao;
 
 import co.edu.unicartagena.platf.entity.IEntity;
+
 import java.util.List;
+
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.EntityTransaction;

@@ -16,6 +16,7 @@
 package co.edu.unicartagena.platf.dao;
 
 import co.edu.unicartagena.platf.entity.IEntity;
+
 import java.util.List;
 
 /**

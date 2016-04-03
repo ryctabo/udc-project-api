@@ -17,7 +17,6 @@ package co.edu.unicartagena.platf.dao.controller;
 
 import co.edu.unicartagena.platf.dao.DataAccessObject;
 import co.edu.unicartagena.platf.dao.exception.NotCreatedEntityManagerException;
-import co.edu.unicartagena.platf.dao.exception.UserNotFoundException;
 import co.edu.unicartagena.platf.entity.User;
 
 /**
@@ -31,30 +30,33 @@ public interface UserDao extends DataAccessObject<User, Integer> {
      * 
      * @param username
      * @return
-     * @throws UserNotFoundException
      * @throws NotCreatedEntityManagerException 
      */
-    User findUserByUsername(String username) throws UserNotFoundException,
-            NotCreatedEntityManagerException;
+    User findUserByUsername(String username) throws NotCreatedEntityManagerException;
     
     /**
      * 
      * @param email
-     * @return
-     * @throws UserNotFoundException 
+     * @return 
      * @throws NotCreatedEntityManagerException 
      */
-    User findUserByEmail(String email) throws UserNotFoundException,
-            NotCreatedEntityManagerException;
+    User findUserByEmail(String email) throws NotCreatedEntityManagerException;
     
     /**
      * 
      * @param argument
-     * @return
-     * @throws UserNotFoundException 
+     * @return 
      * @throws NotCreatedEntityManagerException 
      */
-    User findUserByUsernameOrEmail(String argument) throws UserNotFoundException,
-            NotCreatedEntityManagerException;
+    User findUserByUsernameOrEmail(String argument) throws NotCreatedEntityManagerException;
+    
+    /**
+     * 
+     * @param usernameOrEmail
+     * @param password
+     * @return
+     * @throws NotCreatedEntityManagerException 
+     */
+    boolean login(String usernameOrEmail, String password) throws NotCreatedEntityManagerException;
     
 }
