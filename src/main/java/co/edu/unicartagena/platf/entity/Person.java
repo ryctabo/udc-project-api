@@ -15,21 +15,24 @@
  */
 package co.edu.unicartagena.platf.entity;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.PrimaryKeyJoinColumn;
 
 /**
  *
  * @author Gustavo Pacheco <ryctabo@gmail.com>
- * @version 1.0
+ * @version 1.0-SNAPSHOT
  */
 @Entity
 @PrimaryKeyJoinColumn(referencedColumnName = "id")
 public class Person extends User {
     
+    @Column(length = 100)
     private String name;
     
-    private String lastname;
+    @Column(name = "last_name", length = 100)
+    private String lastName;
 
     public Person() {
     }
@@ -42,10 +45,10 @@ public class Person extends User {
         super(username, email, password);
     }
 
-    public Person(String name, String lastname, String email, String password) {
+    public Person(String name, String lastName, String email, String password) {
         super(email, password);
         this.name = name;
-        this.lastname = lastname;
+        this.lastName = lastName;
     }
 
     public String getName() {
@@ -56,17 +59,17 @@ public class Person extends User {
         this.name = name;
     }
 
-    public String getLastname() {
-        return lastname;
+    public String getLastName() {
+        return lastName;
     }
 
-    public void setLastname(String lastname) {
-        this.lastname = lastname;
+    public void setLastName(String lastName) {
+        this.lastName = lastName;
     }
 
     @Override
     public String toString() {
-        return String.format("%s %s", this.name, this.lastname);
+        return String.format("%s %s", this.name, this.lastName);
     }
     
 }
