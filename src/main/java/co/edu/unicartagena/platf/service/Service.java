@@ -28,12 +28,12 @@ public interface Service<T, K> {
     
     T add(T entity);
     
-    T update(K key, T entity);
+    T update(K id, T entity);
     
-    T remove(K key);
+    T remove(K id);
     
-    T find(K key);
+    T get(K id);
     
-    List<T> findAll();
+    List<T> getAll();
     
 }
