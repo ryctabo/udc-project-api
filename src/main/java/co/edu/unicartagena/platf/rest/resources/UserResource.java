@@ -23,7 +23,7 @@ import javax.ws.rs.core.MediaType;
 /**
  *
  * @author Gustavo Pacheco <ryctabo@gmail.com>
- * @version 
+ * @version 1.0-SNAPSHOT
  */
 @Path("users")
 public class UserResource {
