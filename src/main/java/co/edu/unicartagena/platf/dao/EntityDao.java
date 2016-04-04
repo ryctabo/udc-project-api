@@ -129,7 +129,8 @@ public class EntityDao<T extends IEntity, I> implements DataAccessObject<T, I> {
                 T entity = this.find(id);
                 
                 if (entity != null)
-                    entityManager.remove(entity);
+                    entityManager.remove(entityManager.contains(entity) ?
+                            entity : entityManager.merge(entity));
                 
                 transaction.commit();
             }
