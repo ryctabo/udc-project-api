@@ -69,12 +69,12 @@ public class UserServiceImpl implements UserService, LoginService {
     }
 
     @Override
-    public User find(Integer id) {
+    public User get(Integer id) {
         return id != null ? controller.find(id) : null;
     }
 
     @Override
-    public List<User> findAll() {
+    public List<User> getAll() {
         return null;
     }
     

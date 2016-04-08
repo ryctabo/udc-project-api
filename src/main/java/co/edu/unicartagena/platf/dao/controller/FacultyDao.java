@@ -13,27 +13,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package co.edu.unicartagena.platf.service;
+package co.edu.unicartagena.platf.dao.controller;
 
-import java.util.List;
+import co.edu.unicartagena.platf.dao.DataAccessObject;
+import co.edu.unicartagena.platf.entity.Faculty;
 
 /**
  *
  * @author Gustavo Pacheco <ryctabo@gmail.com>
- * @version 1.0
- * @param <T> entity
- * @param <K> key or id of the entity
+ * @version 1.0-SNAPSHOT
  */
-public interface Service<T, K> {
-    
-    T add(T entity);
-    
-    T update(K id, T entity);
-    
-    T remove(K id);
-    
-    T get(K id);
-    
-    List<T> getAll();
+public interface FacultyDao extends DataAccessObject<Faculty, Integer> {
     
 }

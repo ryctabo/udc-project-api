@@ -15,25 +15,13 @@
  */
 package co.edu.unicartagena.platf.service;
 
-import java.util.List;
+import co.edu.unicartagena.platf.entity.Faculty;
 
 /**
  *
  * @author Gustavo Pacheco <ryctabo@gmail.com>
- * @version 1.0
- * @param <T> entity
- * @param <K> key or id of the entity
+ * @version 1.0-SNAPSHOT
  */
-public interface Service<T, K> {
-    
-    T add(T entity);
-    
-    T update(K id, T entity);
-    
-    T remove(K id);
-    
-    T get(K id);
-    
-    List<T> getAll();
+public interface FacultyService extends Service<Faculty, Integer> {
     
 }
