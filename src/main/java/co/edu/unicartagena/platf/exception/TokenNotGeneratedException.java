@@ -17,7 +17,8 @@ package co.edu.unicartagena.platf.exception;
 
 /**
  *
- * @author Gustavo Pacheco
+ * @author Gustavo Pacheco <ryctabo@gmail.com>
+ * @version 1.0
  */
 public class TokenNotGeneratedException extends Exception {
 

@@ -22,7 +22,7 @@ import javax.persistence.PrimaryKeyJoinColumn;
 /**
  *
  * @author Gustavo Pacheco <ryctabo@gmail.com>
- * @version 1.0-SNAPSHOT
+ * @version 1.0
  */
 @Entity
 @PrimaryKeyJoinColumn(referencedColumnName = "id")

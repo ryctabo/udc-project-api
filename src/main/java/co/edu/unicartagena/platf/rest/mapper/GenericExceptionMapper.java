@@ -24,7 +24,7 @@ import javax.ws.rs.ext.Provider;
 /**
  *
  * @author Gustavo Pacheco <ryctabo@gmail.com>
- * @version 1.0-SNAPSHOT
+ * @version 1.0
  */
 @Provider
 public class GenericExceptionMapper implements ExceptionMapper<Throwable> {

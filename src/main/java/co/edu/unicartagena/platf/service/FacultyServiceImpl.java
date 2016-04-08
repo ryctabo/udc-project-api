@@ -24,7 +24,11 @@ import javax.ws.rs.BadRequestException;
 import javax.ws.rs.NotFoundException;
 import javax.ws.rs.core.Response;
 
-
+/**
+ * 
+ * @author Gustavo Pacheco <ryctabo@gmail.com>
+ * @version 1.0
+ */
 public class FacultyServiceImpl implements FacultyService {
     
     FacultyDao controller = new FacultyDaoController();
