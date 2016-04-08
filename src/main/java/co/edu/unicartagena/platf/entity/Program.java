@@ -15,54 +15,44 @@
  */
 package co.edu.unicartagena.platf.entity;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.OneToMany;
-
+import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlTransient;
-import javax.xml.bind.annotation.XmlType;
 
 /**
  *
  * @author Gustavo Pacheco <ryctabo@gmail.com>
- * @version 1.0
+ * @version 1.0-SNAPSHOT
  */
 @Entity
 @XmlRootElement
-@XmlType(propOrder = {"id", "code", "name"})
-public class Faculty implements IEntity {
+public class Program implements IEntity {
     
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private int id;
     
-    @Column(unique = true, length = 3, nullable = false)
+    @Column(length = 3, nullable = false, unique = true)
     private String code;
     
-    @Column(length = 50, nullable = false)
+    @Column(length = 100, nullable = false)
     private String name;
     
-    @OneToMany
-    @XmlTransient
-    @JoinColumn(name = "faculty_id", referencedColumnName = "id")
-    private final List<Program> programs;
-
-    public Faculty() {
-        this.programs = new ArrayList<>();
+    @Column(name = "faculty_id")
+    @XmlElement(name = "faculty_id")
+    private int facultyId;
+    
+    public Program() {
     }
 
-    public Faculty(String code, String name) {
+    public Program(String code, String name, int facultyId) {
         this.code = code;
         this.name = name;
-        this.programs = new ArrayList<>();
+        this.facultyId = facultyId;
     }
 
     public int getId() {
@@ -89,15 +79,12 @@ public class Faculty implements IEntity {
         this.name = name;
     }
 
-    public List<Program> getPrograms() {
-        return programs;
+    public int getFacultyId() {
+        return facultyId;
     }
 
-    public void addProgram(Program program) {
-        this.programs.add(program);
-        if (program.getFacultyId() != this.id) {
-            program.setFacultyId(this.id);
-        }
+    public void setFacultyId(int facultyId) {
+        this.facultyId = facultyId;
     }
     
 }
