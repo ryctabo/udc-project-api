@@ -22,14 +22,16 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlType;
 
 /**
  *
  * @author Gustavo Pacheco <ryctabo@gmail.com>
- * @version 1.0-SNAPSHOT
+ * @version 1.0
  */
 @Entity
 @XmlRootElement
+@XmlType(propOrder = {"id", "code", "name", "facultyId"})
 public class Program implements IEntity {
     
     @Id
