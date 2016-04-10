@@ -55,8 +55,7 @@ public class FacultyServiceImpl implements FacultyService {
     @Override
     public Faculty update(Integer id, Faculty faculty) {
         if (id == null || id <= 0) {
-            ErrorMessage em = new ErrorMessage(400, "The id of faculty is required",
-                    "No documentation for now.");
+            ErrorMessage em = new ErrorMessage(400, "The id of faculty is required");
             Response response = Response.status(Response.Status.BAD_REQUEST)
                     .entity(em)
                     .build();
@@ -64,8 +63,7 @@ public class FacultyServiceImpl implements FacultyService {
         }
         
         if (faculty == null) {
-            ErrorMessage em = new ErrorMessage(400, "The faculty information is"
-                    + " required", "No documentation for now.");
+            ErrorMessage em = new ErrorMessage(400, "The faculty information is");
             Response response = Response.status(Response.Status.BAD_REQUEST)
                     .entity(em)
                     .build();
@@ -97,7 +95,7 @@ public class FacultyServiceImpl implements FacultyService {
 
     private void launchFacultyNotFound(Integer id) throws NotFoundException {
         String msg = String.format("The faculty with id %d not found.", id);
-        ErrorMessage em = new ErrorMessage(404, msg, "No documentation for now.");
+        ErrorMessage em = new ErrorMessage(404, msg);
         Response response = Response.status(Response.Status.NOT_FOUND)
                 .entity(em)
                 .build();
