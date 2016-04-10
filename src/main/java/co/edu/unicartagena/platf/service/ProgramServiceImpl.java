@@ -15,12 +15,16 @@
  */
 package co.edu.unicartagena.platf.service;
 
+import co.edu.unicartagena.platf.dao.controller.FacultyDao;
+import co.edu.unicartagena.platf.dao.controller.FacultyDaoController;
 import co.edu.unicartagena.platf.dao.controller.ProgramDao;
 import co.edu.unicartagena.platf.dao.controller.ProgramDaoController;
+import co.edu.unicartagena.platf.entity.Faculty;
 import co.edu.unicartagena.platf.entity.Program;
 import co.edu.unicartagena.platf.model.ErrorMessage;
 
 import java.util.List;
+
 import javax.ws.rs.BadRequestException;
 import javax.ws.rs.NotFoundException;
 import javax.ws.rs.core.Response;
@@ -36,6 +40,8 @@ public class ProgramServiceImpl implements ProgramService {
 
     ProgramDao programController = new ProgramDaoController();
 
+    FacultyDao facultyController = new FacultyDaoController();
+
     private ProgramServiceImpl() {
     }
 
@@ -49,9 +55,26 @@ public class ProgramServiceImpl implements ProgramService {
     @Override
     public Program add(Program program) {
         if (program == null) {
-            throw new BadRequestException();
+            throw new BadRequestException("The program is null, this is required.");
         } else if (program.getFacultyId() <= 0) {
-            launchErrorBadRequestById();
+            ErrorMessage me = new ErrorMessage(400, "The faculty id is null, "
+                    + "this is required.");
+            Response response = Response.status(Response.Status.BAD_REQUEST)
+                    .entity(me)
+                    .build();
+            throw new BadRequestException(response);
+        } else {
+            int facultyId = program.getFacultyId();
+            Faculty faculty = facultyController.find(facultyId);
+            if (faculty == null) {
+                String msg = String
+                        .format("The faculty with id %d not found.", facultyId);
+                ErrorMessage em = new ErrorMessage(400, msg);
+                Response response = Response.status(Response.Status.BAD_REQUEST)
+                        .entity(em)
+                        .build();
+                throw new BadRequestException(response);
+            }
         }
         return programController.save(program);
     }
@@ -59,7 +82,11 @@ public class ProgramServiceImpl implements ProgramService {
     @Override
     public Program update(Integer id, Program program) {
         if (id == null || id <= 0) {
-            launchErrorBadRequestById();
+            ErrorMessage em = new ErrorMessage(400, "The program id is required.");
+            Response response = Response.status(Response.Status.BAD_REQUEST)
+                    .entity(em)
+                    .build();
+            throw new BadRequestException(response);
         }
         if (program == null) {
             ErrorMessage em = new ErrorMessage(400, "The program entity is "
@@ -99,13 +126,5 @@ public class ProgramServiceImpl implements ProgramService {
     public List<Program> getAll() {
         return this.programController.findAll();
     }
-
-    private void launchErrorBadRequestById() throws BadRequestException {
-        ErrorMessage em = new ErrorMessage(400, "The program id is required.");
-        Response response = Response.status(Response.Status.BAD_REQUEST)
-                .entity(em)
-                .build();
-        throw new BadRequestException(response);
-    }
-
+    
 }
