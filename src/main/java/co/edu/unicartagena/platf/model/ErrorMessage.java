@@ -15,11 +15,15 @@
  */
 package co.edu.unicartagena.platf.model;
 
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlRootElement;
+
 /**
  *
  * @author Gustavo Pacheco <ryctabo@gmail.com>
  * @version 1.0
  */
+@XmlRootElement
 public class ErrorMessage {
     
     private int code;
@@ -51,7 +55,8 @@ public class ErrorMessage {
     public void setMessage(String message) {
         this.message = message;
     }
-
+    
+    @XmlElement
     public String getDocumentation() {
         return DOCUMENTATION;
     }
