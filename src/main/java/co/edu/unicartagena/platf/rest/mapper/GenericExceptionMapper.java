@@ -24,15 +24,14 @@ import javax.ws.rs.ext.Provider;
 /**
  *
  * @author Gustavo Pacheco <ryctabo@gmail.com>
- * @version 1.0-SNAPSHOT
+ * @version 1.0
  */
 @Provider
 public class GenericExceptionMapper implements ExceptionMapper<Throwable> {
 
     @Override
     public Response toResponse(Throwable e) {
-        ErrorMessage errorMessage = new ErrorMessage(0, e.getMessage(),
-                "No documentation for now.");
+        ErrorMessage errorMessage = new ErrorMessage(0, e.getMessage());
         return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
                 .type(MediaType.APPLICATION_JSON)
                 .entity(errorMessage)

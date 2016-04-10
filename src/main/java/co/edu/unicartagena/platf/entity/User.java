@@ -38,15 +38,26 @@ import javax.persistence.NamedQuery;
 /**
  *
  * @author Gustavo Pacheco <ryctabo@gmail.com>
- * @version 1.0-SNAPSHOT
+ * @version 1.0
  */
 @Entity(name = "UserEntity")
 @Inheritance(strategy = InheritanceType.JOINED)
 @NamedQueries(value = {
-    @NamedQuery(name = "user.findByUsername", query = "select u from UserEntity u where u.username = :username"),
-    @NamedQuery(name = "user.findByEmail", query = "select u from UserEntity u where u.email = :email"),
-    @NamedQuery(name = "user.findByUsernameOrEmail", query = "select u from UserEntity u where u.username = :signIn or u.email = :signIn"),
-    @NamedQuery(name = "user.login", query = "select u from UserEntity u where (u.username = :login or u.email = :login) and u.password = :password and u.enabled = true and u.deleted = false")
+    @NamedQuery(
+            name = "user.findByUsername",
+            query = "select u from UserEntity u where u.username = :username"),
+    @NamedQuery(
+            name = "user.findByEmail",
+            query = "select u from UserEntity u where u.email = :email"),
+    @NamedQuery(
+            name = "user.findByUsernameOrEmail",
+            query = "select u from UserEntity u where u.username = :signIn or "
+                    + "u.email = :signIn"),
+    @NamedQuery(
+            name = "user.login",
+            query = "select u from UserEntity u where (u.username = :login or "
+                    + "u.email = :login) and u.password = :password and "
+                    + "u.enabled = true and u.deleted = false")
 })
 public class User implements IEntity {
     

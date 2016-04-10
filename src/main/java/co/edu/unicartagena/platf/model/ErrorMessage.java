@@ -18,7 +18,7 @@ package co.edu.unicartagena.platf.model;
 /**
  *
  * @author Gustavo Pacheco <ryctabo@gmail.com>
- * @version 1.0-SNAPSHOT
+ * @version 1.0
  */
 public class ErrorMessage {
     
@@ -26,7 +26,7 @@ public class ErrorMessage {
     
     private String message;
     
-    private String documentation;
+    private static final String DOCUMENTATION = "No documentation for now.";
 
     public ErrorMessage() {
     }
@@ -34,12 +34,6 @@ public class ErrorMessage {
     public ErrorMessage(int code, String message) {
         this.code = code;
         this.message = message;
-    }
-
-    public ErrorMessage(int code, String message, String documentation) {
-        this.code = code;
-        this.message = message;
-        this.documentation = documentation;
     }
 
     public int getCode() {
@@ -59,11 +53,8 @@ public class ErrorMessage {
     }
 
     public String getDocumentation() {
-        return documentation;
+        return DOCUMENTATION;
     }
 
-    public void setDocumentation(String documentation) {
-        this.documentation = documentation;
-    }
 
 }

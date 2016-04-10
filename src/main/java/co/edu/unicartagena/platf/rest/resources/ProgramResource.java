@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Gustavo Pacheco.
+ * Copyright 2016 Gustavo Pacheco <ryctabo@gmail.com>.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,13 +15,11 @@
  */
 package co.edu.unicartagena.platf.rest.resources;
 
-import co.edu.unicartagena.platf.entity.Faculty;
-import co.edu.unicartagena.platf.service.FacultyService;
-import co.edu.unicartagena.platf.service.FacultyServiceImpl;
+import co.edu.unicartagena.platf.entity.Program;
+import co.edu.unicartagena.platf.service.ProgramService;
+import co.edu.unicartagena.platf.service.ProgramServiceImpl;
 import java.net.URI;
-
 import java.util.List;
-
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
@@ -38,46 +36,47 @@ import javax.ws.rs.core.UriInfo;
 /**
  *
  * @author Gustavo Pacheco <ryctabo@gmail.com>
- * @version 1.0
+ * @version 1.0-SNAPSHOT
  */
-@Path("faculties")
+@Path("programs")
 @Consumes(MediaType.APPLICATION_JSON)
 @Produces(MediaType.APPLICATION_JSON)
-public class FacultyResource {
-    
-    FacultyService service = FacultyServiceImpl.getInstance();
-    
+public class ProgramResource {
+
+    ProgramService service = ProgramServiceImpl.getInstance();
+
     @GET
-    public List<Faculty> getAllFaculties() {
+    public List<Program> getAll() {
         return service.getAll();
     }
-    
+
     @POST
-    public Response addFaculty(Faculty faculty, @Context UriInfo uriInfo) {
-        Faculty newFaculty = service.add(faculty);
-        String newId = String.valueOf(newFaculty.getId());
-        URI uri = uriInfo.getAbsolutePathBuilder().path(newId).build();
+    public Response addProgram(Program program, @Context UriInfo uriInfo) {
+        Program newProgram = service.add(program);
+        String newProgramId = String.valueOf(newProgram.getId());
+        URI uri = uriInfo.getAbsolutePathBuilder().path(newProgramId).build();
         return Response.created(uri)
-                .entity(newFaculty)
+                .entity(newProgram)
                 .build();
     }
     
     @PUT
-    @Path("{facultyId}")
-    public Faculty updateFaculty(@PathParam("facultyId") Integer id, Faculty faculty) {
-        return service.update(id, faculty);
+    @Path("{programId}")
+    public Program updateProgram(@PathParam("programId") Integer id,
+            Program program) {
+        return service.update(id, program);
     }
     
     @DELETE
-    @Path("{facultyId}")
-    public Faculty removeFaculty(@PathParam("facultyId") Integer id) {
+    @Path("{programId}")
+    public Program deleteProgram(@PathParam("programId") Integer id) {
         return service.remove(id);
     }
     
     @GET
-    @Path("{facultyId}")
-    public Faculty getFaculty(@PathParam("facultyId") Integer id) {
+    @Path("{programId}")
+    public Program get(@PathParam("programId") Integer id) {
         return service.get(id);
     }
-    
+
 }

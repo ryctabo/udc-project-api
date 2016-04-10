@@ -43,7 +43,7 @@ import org.jose4j.lang.JoseException;
 /**
  *
  * @author Gustavo Pacheco <ryctabo@gmail.com>
- * @version 1.0-SNAPSHOT
+ * @version 1.0
  */
 @Path("/")
 @Consumes(MediaType.APPLICATION_JSON)

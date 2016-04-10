@@ -13,30 +13,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package co.edu.unicartagena.platf.exception;
+package co.edu.unicartagena.platf.service;
+
+import co.edu.unicartagena.platf.entity.Program;
 
 /**
  *
  * @author Gustavo Pacheco <ryctabo@gmail.com>
- * @version 1.0
+ * @version 1.0-SNAPSHOT
  */
-public class TokenNotGeneratedException extends Exception {
-
-    /**
-     * Creates a new instance of <code>TokenNotGeneratedException</code> without
-     * detail message.
-     */
-    public TokenNotGeneratedException() {
-        super("Token is not generated.");
-    }
-
-    /**
-     * Constructs an instance of <code>TokenNotGeneratedException</code> with
-     * the specified detail message.
-     *
-     * @param msg the detail message.
-     */
-    public TokenNotGeneratedException(String msg) {
-        super(msg);
-    }
+public interface ProgramService extends Service<Program, Integer> {
+    
 }

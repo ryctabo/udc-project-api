@@ -29,7 +29,7 @@ import javax.persistence.TypedQuery;
 /**
  *
  * @author Gustavo Pacheco <ryctabo@gmail.com>
- * @version 0.4
+ * @version 1.0
  */
 public class UserDaoController extends EntityDao<User, Integer> implements UserDao {
 
