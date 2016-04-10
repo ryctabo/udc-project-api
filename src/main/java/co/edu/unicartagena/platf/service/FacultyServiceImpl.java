@@ -19,27 +19,29 @@ import co.edu.unicartagena.platf.dao.controller.FacultyDao;
 import co.edu.unicartagena.platf.dao.controller.FacultyDaoController;
 import co.edu.unicartagena.platf.entity.Faculty;
 import co.edu.unicartagena.platf.model.ErrorMessage;
+
 import java.util.List;
+
 import javax.ws.rs.BadRequestException;
 import javax.ws.rs.NotFoundException;
 import javax.ws.rs.core.Response;
 
-
 public class FacultyServiceImpl implements FacultyService {
-    
+
     FacultyDao controller = new FacultyDaoController();
 
     private static FacultyService instance;
 
-    private FacultyServiceImpl() {}
-    
+    private FacultyServiceImpl() {
+    }
+
     public static FacultyService getInstance() {
         if (instance == null) {
             instance = new FacultyServiceImpl();
         }
         return instance;
     }
-    
+
     @Override
     public Faculty add(Faculty faculty) {
         if (faculty == null) {
@@ -57,8 +59,10 @@ public class FacultyServiceImpl implements FacultyService {
                     .entity(em)
                     .build();
             throw new BadRequestException(response);
+        } else {
+            get(id);
         }
-        
+
         if (faculty == null) {
             ErrorMessage em = new ErrorMessage(400, "The faculty information is"
                     + " required", "No documentation for now.");
@@ -75,9 +79,6 @@ public class FacultyServiceImpl implements FacultyService {
     @Override
     public Faculty remove(Integer id) {
         Faculty faculty = this.get(id);
-        if (faculty  == null) {
-            launchFacultyNotFound(id);
-        }
         controller.delete(id);
         return faculty;
     }
@@ -86,23 +87,19 @@ public class FacultyServiceImpl implements FacultyService {
     public Faculty get(Integer id) {
         Faculty faculty = controller.find(id);
         if (faculty == null) {
-            launchFacultyNotFound(id);
+            String msg = String.format("The faculty with id %d not found.", id);
+            ErrorMessage em = new ErrorMessage(404, msg, "No documentation for now.");
+            Response response = Response.status(Response.Status.NOT_FOUND)
+                    .entity(em)
+                    .build();
+            throw new NotFoundException(response);
         }
         return faculty;
-    }
-
-    private void launchFacultyNotFound(Integer id) throws NotFoundException {
-        String msg = String.format("The faculty with id %d not found.", id);
-        ErrorMessage em = new ErrorMessage(404, msg, "No documentation for now.");
-        Response response = Response.status(Response.Status.NOT_FOUND)
-                .entity(em)
-                .build();
-        throw new NotFoundException(response);
     }
 
     @Override
     public List<Faculty> getAll() {
         return controller.findAll();
     }
-    
+
 }
