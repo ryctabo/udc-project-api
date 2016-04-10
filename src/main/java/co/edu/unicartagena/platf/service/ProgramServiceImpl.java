@@ -1,0 +1,111 @@
+/*
+ * Copyright 2016 Gustavo Pacheco <ryctabo.wordpress.com>.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+package co.edu.unicartagena.platf.service;
+
+import co.edu.unicartagena.platf.dao.controller.ProgramDao;
+import co.edu.unicartagena.platf.dao.controller.ProgramDaoController;
+import co.edu.unicartagena.platf.entity.Program;
+import co.edu.unicartagena.platf.model.ErrorMessage;
+
+import java.util.List;
+import javax.ws.rs.BadRequestException;
+import javax.ws.rs.NotFoundException;
+import javax.ws.rs.core.Response;
+
+/**
+ *
+ * @author Gustavo Pacheco <ryctabo@gmail.com>
+ * @version 1.0-SNAPSHOT
+ */
+public class ProgramServiceImpl implements ProgramService {
+
+    private static ProgramService instance;
+
+    ProgramDao programController = new ProgramDaoController();
+
+    private ProgramServiceImpl() {
+    }
+
+    public static ProgramService getInstance() {
+        if (instance == null) {
+            instance = new ProgramServiceImpl();
+        }
+        return instance;
+    }
+
+    @Override
+    public Program add(Program program) {
+        if (program == null) {
+            throw new BadRequestException();
+        } else if (program.getFacultyId() <= 0) {
+            launchErrorBadRequestById();
+        }
+        return programController.save(program);
+    }
+
+    @Override
+    public Program update(Integer id, Program program) {
+        if (id == null || id <= 0) {
+            launchErrorBadRequestById();
+        }
+        if (program == null) {
+            ErrorMessage em = new ErrorMessage(400, "The program entity is "
+                    + "required, all attributes are necessary.");
+            Response response = Response.status(Response.Status.BAD_REQUEST)
+                    .entity(em)
+                    .build();
+            throw new BadRequestException(response);
+        }
+        program.setId(id);
+        Program updateProgram = programController.save(program);
+        return updateProgram;
+    }
+
+    @Override
+    public Program remove(Integer id) {
+        Program program = get(id);
+        programController.delete(id);
+        return program;
+    }
+
+    @Override
+    public Program get(Integer id) {
+        Program program = programController.find(id);
+        if (program == null) {
+            String msg = String.format("The program with id %d not found.", id);
+            ErrorMessage em = new ErrorMessage(404, msg);
+            Response response = Response.status(Response.Status.NOT_FOUND)
+                    .entity(em)
+                    .build();
+            throw new NotFoundException(response);
+        }
+        return program;
+    }
+
+    @Override
+    public List<Program> getAll() {
+        return this.programController.findAll();
+    }
+
+    private void launchErrorBadRequestById() throws BadRequestException {
+        ErrorMessage em = new ErrorMessage(400, "The program id is required.");
+        Response response = Response.status(Response.Status.BAD_REQUEST)
+                .entity(em)
+                .build();
+        throw new BadRequestException(response);
+    }
+
+}
