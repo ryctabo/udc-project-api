@@ -41,7 +41,7 @@ import javax.xml.bind.annotation.XmlType;
 public class Faculty implements IEntity {
     
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
     
     @Column(unique = true, length = 3, nullable = false)

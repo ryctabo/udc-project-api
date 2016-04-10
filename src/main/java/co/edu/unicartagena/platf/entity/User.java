@@ -62,7 +62,7 @@ import javax.persistence.NamedQuery;
 public class User implements IEntity {
     
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
     
     @Column(length = 12, unique = true)

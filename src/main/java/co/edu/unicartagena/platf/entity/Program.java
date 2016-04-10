@@ -33,7 +33,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 public class Program implements IEntity {
     
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
     
     @Column(length = 3, nullable = false, unique = true)
