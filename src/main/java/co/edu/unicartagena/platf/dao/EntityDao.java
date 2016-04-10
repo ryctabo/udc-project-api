@@ -15,7 +15,9 @@
  */
 package co.edu.unicartagena.platf.dao;
 
+import co.edu.unicartagena.platf.dao.exception.NotCreatedEntityManagerException;
 import co.edu.unicartagena.platf.entity.IEntity;
+import co.edu.unicartagena.platf.entity.User;
 
 import java.util.List;
 
@@ -31,7 +33,7 @@ import javax.persistence.criteria.CriteriaQuery;
  * @param <I> Data type of primary key or id of entity
  *
  * @author Gustavo Pacheco <ryctabo@gmail.com>
- * @version 1.0
+ * @version 1.1
  */
 public class EntityDao<T extends IEntity, I> implements DataAccessObject<T, I> {
     
@@ -140,4 +142,60 @@ public class EntityDao<T extends IEntity, I> implements DataAccessObject<T, I> {
         }
     }
     
+    /**
+     * Get first user from named query with given params.
+     * 
+     * @param namedQuery named query
+     * @param parameters params for insert into the named query
+     * @param errorMessage the detail message if ocurred a error
+     * @return user
+     * @throws NotCreatedEntityManagerException if entity user is null
+     */
+    protected User executeNamedQuery(String namedQuery, List<Parameter> parameters,
+            String errorMessage) throws NotCreatedEntityManagerException {
+        EntityManager entityManager = getEntityManager();
+        if (entityManager != null) {
+            try {
+                TypedQuery<User> typedQuery = entityManager
+                        .createNamedQuery(namedQuery, User.class);
+
+                for (Parameter parameter : parameters) {
+                    typedQuery.setParameter(parameter.key, parameter.value);
+                }
+                
+                List<User> users = typedQuery.getResultList();
+                if (users.isEmpty()) {
+                    return null;
+                }
+
+                return users.iterator().next();
+            } finally {
+                entityManager.close();
+            }
+        } else {
+            throw new NotCreatedEntityManagerException("The entity manager is "
+                    + "null, entity manager factory does not create entity manager");
+        }
+    }
+
+    /**
+     * The class <code>Parameter</code> is a argument for insert in SQL, more 
+     * exactly in named query.
+     */
+    protected class Parameter {
+
+        String key, value;
+
+        /**
+         * Create a param with key and value.
+         * 
+         * @param key id of value.
+         * @param value object of type string.
+         */
+        public Parameter(String key, String value) {
+            this.key = key;
+            this.value = value;
+        }
+    }
+
 }
