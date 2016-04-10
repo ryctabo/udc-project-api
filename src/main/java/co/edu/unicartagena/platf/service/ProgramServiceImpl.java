@@ -87,6 +87,8 @@ public class ProgramServiceImpl implements ProgramService {
                     .entity(em)
                     .build();
             throw new BadRequestException(response);
+        } else {
+            get(id);
         }
         if (program == null) {
             ErrorMessage em = new ErrorMessage(400, "The program entity is "
