@@ -30,12 +30,15 @@ public class ProgramFilterBean {
     
     @QueryParam("size")
     private Integer size;
+    
+    @QueryParam("facultyId")
+    private Integer facultyId;
 
-    public Integer getStart() {
+    public int getStart() {
         return start;
     }
 
-    public void setStart(Integer start) {
+    public void setStart(int start) {
         this.start = start;
     }
 
@@ -47,4 +50,12 @@ public class ProgramFilterBean {
         this.size = size;
     }
 
+    public Integer getFacultyId() {
+        return facultyId;
+    }
+
+    public void setFacultyId(Integer facultyId) {
+        this.facultyId = facultyId;
+    }
+    
 }

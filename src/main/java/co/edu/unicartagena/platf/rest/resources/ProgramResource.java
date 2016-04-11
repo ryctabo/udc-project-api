@@ -51,6 +51,9 @@ public class ProgramResource {
 
     @GET
     public List<Program> getAll(@BeanParam ProgramFilterBean filterBean) {
+        if (filterBean.getFacultyId() != null) {
+            return service.getAllProgramByFacultyId(filterBean.getFacultyId());
+        }
         if (filterBean.getSize() != null) {
             return service.getAllProgramPaginated(filterBean.getStart(),
                     filterBean.getSize());
