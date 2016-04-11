@@ -19,11 +19,14 @@ import co.edu.unicartagena.platf.dao.controller.FacultyDao;
 import co.edu.unicartagena.platf.dao.controller.FacultyDaoController;
 import co.edu.unicartagena.platf.dao.controller.ProgramDao;
 import co.edu.unicartagena.platf.dao.controller.ProgramDaoController;
+import co.edu.unicartagena.platf.dao.exception.NotCreatedEntityManagerException;
 import co.edu.unicartagena.platf.entity.Faculty;
 import co.edu.unicartagena.platf.entity.Program;
 import co.edu.unicartagena.platf.model.ErrorMessage;
 
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import javax.ws.rs.BadRequestException;
 import javax.ws.rs.NotFoundException;
@@ -41,9 +44,10 @@ public class ProgramServiceImpl implements ProgramService {
     ProgramDao programController = new ProgramDaoController();
 
     FacultyDao facultyController = new FacultyDaoController();
+    
+    private static final Logger LOG = Logger.getLogger(ProgramServiceImpl.class.getName());
 
-    private ProgramServiceImpl() {
-    }
+    private ProgramServiceImpl() {}
 
     public static ProgramService getInstance() {
         if (instance == null) {
@@ -150,6 +154,26 @@ public class ProgramServiceImpl implements ProgramService {
             throw new BadRequestException(response);
         }
         return this.programController.findAllPaginated(start, size);
+    }
+
+    @Override
+    public List<Program> getAllProgramByFacultyId(Integer facultyId) {
+        if (facultyId == null) {
+            ErrorMessage em = new ErrorMessage(400, "The faculty id is null, "
+                    + "it's required.");
+            Response response = Response.status(Response.Status.BAD_REQUEST)
+                    .entity(em)
+                    .build();
+            throw new BadRequestException(response);
+        }
+        
+        try {
+            return programController.findAllProgramsByFacultyId(facultyId);
+        } catch (NotCreatedEntityManagerException ex) {
+            LOG.log(Level.SEVERE, null, ex);
+        }
+        
+        return null;
     }
     
 }

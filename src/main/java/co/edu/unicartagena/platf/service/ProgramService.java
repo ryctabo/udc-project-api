@@ -27,4 +27,6 @@ public interface ProgramService extends Service<Program, Integer> {
     
     List<Program> getAllProgramPaginated(int start, int size);
     
+    List<Program> getAllProgramByFacultyId(Integer facultyId);
+    
 }
