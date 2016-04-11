@@ -17,6 +17,10 @@ package co.edu.unicartagena.platf.dao.controller;
 
 import co.edu.unicartagena.platf.dao.EntityDao;
 import co.edu.unicartagena.platf.entity.Program;
+import java.util.List;
+import javax.persistence.EntityManager;
+import javax.persistence.TypedQuery;
+import javax.persistence.criteria.CriteriaQuery;
 
 /**
  *
@@ -28,6 +32,28 @@ public class ProgramDaoController extends EntityDao<Program, Integer>
     
     public ProgramDaoController() {
         super(Program.class);
+    }
+
+    @Override
+    public List<Program> findAllPaginated(int start, int size) {
+        EntityManager entityManager = getEntityManager();
+        try {
+            CriteriaQuery criteriaQuery = entityManager
+                    .getCriteriaBuilder()
+                    .createQuery();
+            
+            criteriaQuery.select(criteriaQuery.from(Program.class));
+            
+            TypedQuery<Program> typedQuery = entityManager
+                    .createQuery(criteriaQuery);
+            
+            return typedQuery.setFirstResult(start)
+                    .setMaxResults(size)
+                    .getResultList();
+        } finally {
+            if (entityManager != null)
+                entityManager.close();
+        }
     }
     
 }

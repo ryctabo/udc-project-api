@@ -17,6 +17,7 @@ package co.edu.unicartagena.platf.dao.controller;
 
 import co.edu.unicartagena.platf.dao.DataAccessObject;
 import co.edu.unicartagena.platf.entity.Program;
+import java.util.List;
 
 /**
  *
@@ -24,5 +25,7 @@ import co.edu.unicartagena.platf.entity.Program;
  * @version 1.0-SNAPSHOT
  */
 public interface ProgramDao extends DataAccessObject<Program, Integer> {
+    
+    List<Program> findAllPaginated(int start, int size);
     
 }
