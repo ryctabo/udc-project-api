@@ -32,7 +32,7 @@ import javax.persistence.criteria.CriteriaQuery;
  * @param <I> Data type of primary key or id of entity
  *
  * @author Gustavo Pacheco <ryctabo@gmail.com>
- * @version 1.1
+ * @version 1.2.1
  */
 public class EntityDao<T extends IEntity, I> implements DataAccessObject<T, I> {
 
