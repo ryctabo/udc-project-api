@@ -16,8 +16,12 @@
 package co.edu.unicartagena.platf.dao.controller;
 
 import co.edu.unicartagena.platf.dao.EntityDao;
+import co.edu.unicartagena.platf.dao.exception.NotCreatedEntityManagerException;
 import co.edu.unicartagena.platf.entity.Program;
+
+import java.util.Arrays;
 import java.util.List;
+
 import javax.persistence.EntityManager;
 import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaQuery;
@@ -54,6 +58,14 @@ public class ProgramDaoController extends EntityDao<Program, Integer>
             if (entityManager != null)
                 entityManager.close();
         }
+    }
+
+    @Override
+    public List<Program> findAllProgramsByFacultyId(int facultyId)
+            throws NotCreatedEntityManagerException {
+        List<Parameter> params = Arrays
+                .asList(new Parameter("facultyId", String.valueOf(facultyId)));
+        return executeNamedQueryForList("program.findAllByFacultyId", params);
     }
     
 }

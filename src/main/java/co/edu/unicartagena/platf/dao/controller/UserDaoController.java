@@ -25,7 +25,7 @@ import java.util.List;
 /**
  *
  * @author Gustavo Pacheco <ryctabo@gmail.com>
- * @version 2.0
+ * @version 1.0-SNAPSHOT
  */
 public class UserDaoController extends EntityDao<User, Integer> implements UserDao {
 

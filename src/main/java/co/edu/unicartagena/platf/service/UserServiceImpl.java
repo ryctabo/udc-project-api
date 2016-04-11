@@ -30,7 +30,7 @@ import javax.ws.rs.WebApplicationException;
 /**
  *
  * @author Gustavo Pacheco <ryctabo@gmail.com>
- * @version 1.0
+ * @version 1.0-SNAPSHOT
  */
 public class UserServiceImpl implements UserService, LoginService {
 

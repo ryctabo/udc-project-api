@@ -16,7 +16,9 @@
 package co.edu.unicartagena.platf.dao.controller;
 
 import co.edu.unicartagena.platf.dao.DataAccessObject;
+import co.edu.unicartagena.platf.dao.exception.NotCreatedEntityManagerException;
 import co.edu.unicartagena.platf.entity.Program;
+
 import java.util.List;
 
 /**
@@ -27,5 +29,8 @@ import java.util.List;
 public interface ProgramDao extends DataAccessObject<Program, Integer> {
     
     List<Program> findAllPaginated(int start, int size);
+    
+    List<Program> findAllProgramsByFacultyId(int facultyId)
+            throws NotCreatedEntityManagerException;
     
 }
