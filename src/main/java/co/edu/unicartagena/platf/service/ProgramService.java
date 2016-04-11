@@ -16,6 +16,7 @@
 package co.edu.unicartagena.platf.service;
 
 import co.edu.unicartagena.platf.entity.Program;
+import java.util.List;
 
 /**
  *
@@ -23,5 +24,7 @@ import co.edu.unicartagena.platf.entity.Program;
  * @version 1.0-SNAPSHOT
  */
 public interface ProgramService extends Service<Program, Integer> {
+    
+    List<Program> getAllProgramPaginated(int start, int size);
     
 }

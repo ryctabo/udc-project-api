@@ -128,5 +128,28 @@ public class ProgramServiceImpl implements ProgramService {
     public List<Program> getAll() {
         return this.programController.findAll();
     }
+
+    @Override
+    public List<Program> getAllProgramPaginated(int start, int size) {
+        if (start < 0) {
+            String msg = String.format("The start parameter is equal to %d, "
+                    + "it should not be less than 0.", start);
+            ErrorMessage em = new ErrorMessage(400, msg);
+            Response response = Response.status(Response.Status.BAD_REQUEST)
+                    .entity(em)
+                    .build();
+            throw new BadRequestException(response);
+        }
+        if (size <= 0) {
+            String msg = String.format("The size parameter is equal to %d, "
+                    + "it must be greater than 0.", size);
+            ErrorMessage em = new ErrorMessage(400, msg);
+            Response response = Response.status(Response.Status.BAD_REQUEST)
+                    .entity(em)
+                    .build();
+            throw new BadRequestException(response);
+        }
+        return this.programController.findAllPaginated(start, size);
+    }
     
 }
