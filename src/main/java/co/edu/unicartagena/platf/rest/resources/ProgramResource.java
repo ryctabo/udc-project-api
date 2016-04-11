@@ -16,10 +16,14 @@
 package co.edu.unicartagena.platf.rest.resources;
 
 import co.edu.unicartagena.platf.entity.Program;
+import co.edu.unicartagena.platf.rest.bean.ProgramFilterBean;
 import co.edu.unicartagena.platf.service.ProgramService;
 import co.edu.unicartagena.platf.service.ProgramServiceImpl;
+
 import java.net.URI;
 import java.util.List;
+import javax.ws.rs.BeanParam;
+
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
@@ -46,7 +50,11 @@ public class ProgramResource {
     ProgramService service = ProgramServiceImpl.getInstance();
 
     @GET
-    public List<Program> getAll() {
+    public List<Program> getAll(@BeanParam ProgramFilterBean filterBean) {
+        if (filterBean.getSize() != null) {
+            return service.getAllProgramPaginated(filterBean.getStart(),
+                    filterBean.getSize());
+        }
         return service.getAll();
     }
 
