@@ -40,24 +40,21 @@ public class UserDaoController extends EntityDao<User, Integer> implements UserD
     public User findUserByUsername(String username)
             throws NotCreatedEntityManagerException {
         List<Parameter> parameters = Arrays.asList(new Parameter("username", username));
-        String msg = String.format("The user with name %s was not found.", username);
-        return executeNamedQuery("user.findByUsername", parameters, msg);
+        return executeNamedQuery("user.findByUsername", parameters);
     }
 
     @Override
     public User findUserByEmail(String email)
             throws NotCreatedEntityManagerException {
         List<Parameter> parameters = Arrays.asList(new Parameter("email", email));
-        String errorMessage = String.format("The user with email %s was not found", email);
-        return executeNamedQuery("user.findByEmail", parameters, errorMessage);
+        return executeNamedQuery("user.findByEmail", parameters);
     }
 
     @Override
     public User findUserByUsernameOrEmail(String argument)
             throws NotCreatedEntityManagerException {
         List<Parameter> params = Arrays.asList(new Parameter("signIn", argument));
-        String errorMeesage = "The username or email is not found";
-        return executeNamedQuery("user.findByUsernameOrEmail", params, errorMeesage);
+        return executeNamedQuery("user.findByUsernameOrEmail", params);
     }
     
     @Override
@@ -67,8 +64,7 @@ public class UserDaoController extends EntityDao<User, Integer> implements UserD
                 new Parameter("login", usernameOrEmail),
                 new Parameter("password", password)
         );
-        String errorMsg = "The username or password is not valid";
-        User user = executeNamedQuery("user.login", params, errorMsg);
+        User user = executeNamedQuery("user.login", params);
         return user != null;
     }
 

@@ -17,7 +17,6 @@ package co.edu.unicartagena.platf.dao;
 
 import co.edu.unicartagena.platf.dao.exception.NotCreatedEntityManagerException;
 import co.edu.unicartagena.platf.entity.IEntity;
-import co.edu.unicartagena.platf.entity.User;
 
 import java.util.List;
 
@@ -36,12 +35,12 @@ import javax.persistence.criteria.CriteriaQuery;
  * @version 1.1
  */
 public class EntityDao<T extends IEntity, I> implements DataAccessObject<T, I> {
-    
+
     /**
      * Entity class.
      */
     protected Class<T> entityClass;
-    
+
     /**
      * the name of persistence unit of datasource for connection in the database.
      */
@@ -56,7 +55,7 @@ public class EntityDao<T extends IEntity, I> implements DataAccessObject<T, I> {
     public EntityDao(Class<T> entityClass) {
         this.entityClass = entityClass;
     }
-    
+
     /**
      * get entity manager factory
      * @return entity manager factory
@@ -64,7 +63,7 @@ public class EntityDao<T extends IEntity, I> implements DataAccessObject<T, I> {
     public static EntityManagerFactory getEntityManagerFactory() {
         return FACTORY;
     }
-    
+
     /**
      * This method create a entity manager of a factory
      * @return entity manager
@@ -72,14 +71,14 @@ public class EntityDao<T extends IEntity, I> implements DataAccessObject<T, I> {
     protected EntityManager getEntityManager() {
         return FACTORY.createEntityManager();
     }
-    
+
     @Override
     public List<T> findAll() {
         EntityManager entityManager = getEntityManager();
         try {
             CriteriaQuery criteriaQuery = entityManager.getCriteriaBuilder().createQuery();
             criteriaQuery.select(criteriaQuery.from(this.entityClass));
-            
+
             TypedQuery<T> typedQuery = entityManager.createQuery(criteriaQuery);
             return typedQuery.getResultList();
         } finally {
@@ -92,7 +91,7 @@ public class EntityDao<T extends IEntity, I> implements DataAccessObject<T, I> {
     public T find(I id) {
         if (id == null)
             return null;
-        
+
         EntityManager entityManager = getEntityManager();
         try {
             return entityManager.find(this.entityClass, id);
@@ -121,19 +120,19 @@ public class EntityDao<T extends IEntity, I> implements DataAccessObject<T, I> {
     public void delete(I id) {
         if (id == null)
             return ;
-        
+
         EntityManager entityManager = getEntityManager();
         try {
             if (entityManager != null) {
                 EntityTransaction transaction = entityManager.getTransaction();
                 transaction.begin();
-                
+
                 T entity = this.find(id);
-                
+
                 if (entity != null)
                     entityManager.remove(entityManager.contains(entity) ?
                             entity : entityManager.merge(entity));
-                
+
                 transaction.commit();
             }
         } finally {
@@ -141,34 +140,42 @@ public class EntityDao<T extends IEntity, I> implements DataAccessObject<T, I> {
                 entityManager.close();
         }
     }
-    
+
     /**
-     * Get first user from named query with given params.
-     * 
+     * Get first entity from named query with given params.
+     *
      * @param namedQuery named query
      * @param parameters params for insert into the named query
-     * @param errorMessage the detail message if ocurred a error
-     * @return user
+     * @return entity class
      * @throws NotCreatedEntityManagerException if entity user is null
      */
-    protected User executeNamedQuery(String namedQuery, List<Parameter> parameters,
-            String errorMessage) throws NotCreatedEntityManagerException {
+    protected T executeNamedQuery(String namedQuery, List<Parameter> parameters)
+            throws NotCreatedEntityManagerException {
+        List<T> entities = executeNamedQueryForList(namedQuery, parameters);
+        return entities.isEmpty() ? null : entities.iterator().next();
+    }
+
+    /**
+     * Get all entities from named query with given params.
+     *
+     * @param namedQuery named query
+     * @param parameters params for insert into the named query
+     * @return entity class
+     * @throws NotCreatedEntityManagerException if entity user is null
+     */
+    protected List<T> executeNamedQueryForList(String namedQuery, List<Parameter> parameters)
+            throws NotCreatedEntityManagerException {
         EntityManager entityManager = getEntityManager();
         if (entityManager != null) {
             try {
-                TypedQuery<User> typedQuery = entityManager
-                        .createNamedQuery(namedQuery, User.class);
+                TypedQuery<T> typedQuery = entityManager
+                        .createNamedQuery(namedQuery, entityClass);
 
                 for (Parameter parameter : parameters) {
                     typedQuery.setParameter(parameter.key, parameter.value);
                 }
-                
-                List<User> users = typedQuery.getResultList();
-                if (users.isEmpty()) {
-                    return null;
-                }
 
-                return users.iterator().next();
+                return typedQuery.getResultList();
             } finally {
                 entityManager.close();
             }
@@ -179,20 +186,22 @@ public class EntityDao<T extends IEntity, I> implements DataAccessObject<T, I> {
     }
 
     /**
-     * The class <code>Parameter</code> is a argument for insert in SQL, more 
+     * The class <code>Parameter</code> is a argument for insert in SQL, more
      * exactly in named query.
      */
     protected class Parameter {
 
-        String key, value;
+        protected String key;
+
+        protected Object value;
 
         /**
          * Create a param with key and value.
-         * 
+         *
          * @param key id of value.
          * @param value object of type string.
          */
-        public Parameter(String key, String value) {
+        public Parameter(String key, Object value) {
             this.key = key;
             this.value = value;
         }
