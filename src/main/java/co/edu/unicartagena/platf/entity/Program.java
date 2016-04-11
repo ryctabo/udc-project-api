@@ -20,6 +20,8 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
@@ -27,11 +29,15 @@ import javax.xml.bind.annotation.XmlType;
 /**
  *
  * @author Gustavo Pacheco <ryctabo@gmail.com>
- * @version 1.0
+ * @version 1.1-SNAPSHOT
  */
 @Entity
 @XmlRootElement
 @XmlType(propOrder = {"id", "code", "name", "facultyId"})
+@NamedQueries({
+    @NamedQuery(name = "program.findByFacultyId",
+            query = "select p from Program p where p.facultyId = :facultyId")
+})
 public class Program implements IEntity {
     
     @Id
