@@ -64,8 +64,8 @@ public class ProgramDaoController extends EntityDao<Program, Integer>
     public List<Program> findAllProgramsByFacultyId(int facultyId)
             throws NotCreatedEntityManagerException {
         List<Parameter> params = Arrays
-                .asList(new Parameter("facultyId", String.valueOf(facultyId)));
-        return executeNamedQueryForList("program.findAllByFacultyId", params);
+                .asList(new Parameter("facultyId", facultyId));
+        return executeNamedQueryForList("program.findByFacultyId", params);
     }
     
 }
