@@ -18,8 +18,8 @@ package co.edu.unicartagena.platf.rest.resources;
 import co.edu.unicartagena.platf.entity.Faculty;
 import co.edu.unicartagena.platf.service.FacultyService;
 import co.edu.unicartagena.platf.service.FacultyServiceImpl;
-import java.net.URI;
 
+import java.net.URI;
 import java.util.List;
 
 import javax.ws.rs.Consumes;
