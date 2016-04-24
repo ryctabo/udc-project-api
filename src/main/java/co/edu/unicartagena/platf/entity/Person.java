@@ -18,6 +18,9 @@ package co.edu.unicartagena.platf.entity;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.PrimaryKeyJoinColumn;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlType;
 
 /**
  *
@@ -25,6 +28,8 @@ import javax.persistence.PrimaryKeyJoinColumn;
  * @version 1.0
  */
 @Entity
+@XmlRootElement
+@XmlType(propOrder = {"name", "lastName"})
 @PrimaryKeyJoinColumn(referencedColumnName = "id")
 public class Person extends User {
     
@@ -32,6 +37,7 @@ public class Person extends User {
     private String name;
     
     @Column(name = "last_name", length = 100)
+    @XmlElement(name = "last_name")
     private String lastName;
 
     public Person() {

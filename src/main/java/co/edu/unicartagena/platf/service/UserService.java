@@ -22,7 +22,7 @@ import co.edu.unicartagena.platf.entity.User;
  * @author Gustavo Pacheco <ryctabo@gmail.com>
  * @version 1.0-SNAPSHOT
  */
-public interface UserService extends Service<User, Integer> {
+public interface UserService extends Service<User, Integer>, LoginService {
     
     User findByUsernameOrEmail(String username);
     

@@ -21,5 +21,7 @@ package co.edu.unicartagena.platf.service;
  * @version 1.0
  */
 public interface LoginService {
-    boolean login(String usernameOrEmail, String password);
+    
+    boolean login(String username, String password);
+    
 }

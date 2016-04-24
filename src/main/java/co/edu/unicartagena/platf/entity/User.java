@@ -34,12 +34,17 @@ import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
+import javax.xml.bind.annotation.XmlType;
 
 /**
  *
  * @author Gustavo Pacheco <ryctabo@gmail.com>
  * @version 1.0
  */
+@XmlRootElement
 @Entity(name = "UserEntity")
 @Inheritance(strategy = InheritanceType.JOINED)
 @NamedQueries(value = {
@@ -59,9 +64,13 @@ import javax.persistence.NamedQuery;
                     + "u.email = :login) and u.password = :password and "
                     + "u.enabled = true and u.deleted = false")
 })
+@XmlType(propOrder = {
+    "id", "username", "email", "password", "roles", "enabled", "deleted"
+})
 public class User implements IEntity {
     
     @Id
+    @XmlElement(name = "user_id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
     
@@ -71,12 +80,13 @@ public class User implements IEntity {
     @Column(length = 50, unique = true, nullable = false)
     private String email;
     
+    @XmlTransient
     @Column(length = 20, nullable = false)
     private String password;
     
     @ElementCollection(fetch = FetchType.EAGER, targetClass = RoleType.class)
     @JoinTable(name = "role", joinColumns = @JoinColumn(name = "user_id"))
-    @Column(name = "role_id")
+    @Column(name = "role_id", nullable = false)
     @Enumerated(EnumType.ORDINAL)
     private List<RoleType> roles;
     
