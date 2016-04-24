@@ -149,6 +149,16 @@ public class UserServiceImpl implements UserService {
                 LOG.info("Login ussing username");
                 user = controller.findUserByUsername(usernameOrEmail);
             }
+            
+            if (user == null) {
+                String msg = String.format("User with username %s is not found.", usernameOrEmail);
+                ErrorMessage em = new ErrorMessage(Response.Status.NOT_FOUND.getStatusCode(), msg);
+                Response response = Response.status(Response.Status.NOT_FOUND)
+                        .entity(em)
+                        .build();
+                throw new NotFoundException(response);
+            }
+            
             return user;
         } catch (NotCreatedEntityManagerException ex) {
             throw new WebApplicationException("Error generating entity manager"
