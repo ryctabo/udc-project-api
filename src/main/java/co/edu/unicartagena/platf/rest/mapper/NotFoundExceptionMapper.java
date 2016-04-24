@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Gustavo Pacheco.
+ * Copyright 2016 Gustavo Pacheco <ryctabo@gmail.com>.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,30 +13,42 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package co.edu.unicartagena.platf.rest.mapper;
 
 import co.edu.unicartagena.platf.model.ErrorMessage;
-
+import javax.ws.rs.NotFoundException;
+import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import javax.ws.rs.core.UriInfo;
 import javax.ws.rs.ext.ExceptionMapper;
 import javax.ws.rs.ext.Provider;
 
 /**
  *
  * @author Gustavo Pacheco <ryctabo@gmail.com>
- * @version 1.0
+ * @version 1.0-SNAPSHOT
  */
 @Provider
-public class GenericExceptionMapper implements ExceptionMapper<Throwable> {
+public class NotFoundExceptionMapper implements ExceptionMapper<NotFoundException> {
 
+    @Context
+    UriInfo uriInfo;
+    
     @Override
-    public Response toResponse(Throwable e) {
-        ErrorMessage errorMessage = new ErrorMessage(500, e.getMessage());
-        return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
-                .type(MediaType.APPLICATION_JSON)
+    public Response toResponse(NotFoundException e) {
+        String path = "not url";
+        if (uriInfo != null) {
+            path = uriInfo.getPath();
+        }
+        String msg = String.format("HTTP 404 Not found, the resource (%s) you "
+                + "are trying to access is not found.", path);
+        ErrorMessage errorMessage = new ErrorMessage(404, msg);
+        return Response.fromResponse(e.getResponse())
                 .entity(errorMessage)
+                .type(MediaType.APPLICATION_JSON)
                 .build();
     }
-    
+
 }
