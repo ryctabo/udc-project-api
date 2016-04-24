@@ -137,7 +137,7 @@ public class TokenUtil {
     private static JwtClaims createPayload(UserInfo user) {
         JwtClaims claims = new JwtClaims();
         
-        claims.setExpirationTimeMinutesInTheFuture(15);
+        claims.setExpirationTimeMinutesInTheFuture(720);
         claims.setGeneratedJwtId();
         claims.setIssuedAtToNow();
         claims.setNotBefore(NumericDate.now());
