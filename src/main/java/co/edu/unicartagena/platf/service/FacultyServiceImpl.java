@@ -68,7 +68,8 @@ public class FacultyServiceImpl implements FacultyService {
         }
 
         if (faculty == null) {
-            ErrorMessage em = new ErrorMessage(400, "The faculty information is");
+            ErrorMessage em = new ErrorMessage(400, "The faculty information is"
+                    + " required.");
             Response response = Response.status(Response.Status.BAD_REQUEST)
                     .entity(em)
                     .build();
