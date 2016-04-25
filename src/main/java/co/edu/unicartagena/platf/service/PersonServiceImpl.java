@@ -18,11 +18,16 @@ package co.edu.unicartagena.platf.service;
 
 import co.edu.unicartagena.platf.dao.controller.PersonDao;
 import co.edu.unicartagena.platf.dao.controller.PersonDaoController;
+import co.edu.unicartagena.platf.dao.exception.NotCreatedEntityManagerException;
 import co.edu.unicartagena.platf.entity.Person;
 import co.edu.unicartagena.platf.model.ErrorMessage;
+
 import java.util.List;
+import java.util.logging.Logger;
+
 import javax.ws.rs.BadRequestException;
 import javax.ws.rs.NotFoundException;
+import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Response;
 
 
@@ -33,7 +38,9 @@ public class PersonServiceImpl implements PersonService {
     private static PersonService instance;
     
     private PersonServiceImpl(){}
-
+    
+    private static final Logger LOG = Logger.getLogger(PersonServiceImpl.class.getName());
+    
     public static PersonService getInstance() {
         if (instance == null)
             instance = new PersonServiceImpl();
@@ -118,6 +125,26 @@ public class PersonServiceImpl implements PersonService {
         else if (!"".equals(person.getLastName()))
             message = "The last name property is required.";
         return message;
+    }
+
+    @Override
+    public List<Person> findPersonByFullName(String search) {
+        if (search == null) {
+            ErrorMessage em = new ErrorMessage(400, "The param like is required for search.");
+            throw new BadRequestException(Response
+                    .status(Response.Status.BAD_REQUEST)
+                    .entity(em)
+                    .build());
+        }
+        List<Person> people = null;
+        try {
+             people = this.controller.findByLike(search);
+        } catch (NotCreatedEntityManagerException ex) {
+            LOG.info(ex.getMessage());
+            throw new WebApplicationException("Error generating entity manager"
+                    + " for connecting database.\n" + ex.getMessage(), ex);
+        }
+        return people;
     }
     
 }

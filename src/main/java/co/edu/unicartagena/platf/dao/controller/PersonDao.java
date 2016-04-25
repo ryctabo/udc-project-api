@@ -17,7 +17,10 @@
 package co.edu.unicartagena.platf.dao.controller;
 
 import co.edu.unicartagena.platf.dao.DataAccessObject;
+import co.edu.unicartagena.platf.dao.exception.NotCreatedEntityManagerException;
 import co.edu.unicartagena.platf.entity.Person;
+
+import java.util.List;
 
 /**
  *
@@ -25,5 +28,8 @@ import co.edu.unicartagena.platf.entity.Person;
  * @version 1.0-SNAPSHOT
  */
 public interface PersonDao extends DataAccessObject<Person, Integer> {
+    
+    public List<Person> findByLike(String search)
+            throws NotCreatedEntityManagerException;
 
 }

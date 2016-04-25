@@ -17,6 +17,7 @@
 package co.edu.unicartagena.platf.service;
 
 import co.edu.unicartagena.platf.entity.Person;
+import java.util.List;
 
 /**
  *
@@ -25,4 +26,6 @@ import co.edu.unicartagena.platf.entity.Person;
  */
 public interface PersonService extends Service<Person, Integer> {
 
+    List<Person> findPersonByFullName(String search);
+    
 }

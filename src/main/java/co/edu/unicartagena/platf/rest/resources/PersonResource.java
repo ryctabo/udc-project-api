@@ -19,8 +19,10 @@ package co.edu.unicartagena.platf.rest.resources;
 import co.edu.unicartagena.platf.entity.Person;
 import co.edu.unicartagena.platf.service.PersonService;
 import co.edu.unicartagena.platf.service.PersonServiceImpl;
+
 import java.net.URI;
 import java.util.List;
+
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
@@ -47,7 +49,10 @@ public class PersonResource {
     PersonService service = PersonServiceImpl.getInstance();
     
     @GET
-    public List<Person> getAllPeople() {
+    public List<Person> getAllPeople(@QueryParam("like") String like) {
+        if (like != null && !"".equals(like)) {
+            
+        }
         return service.getAll();
     }
     

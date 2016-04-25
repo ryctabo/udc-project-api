@@ -20,6 +20,8 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
 
 /**
  *
@@ -27,6 +29,11 @@ import javax.persistence.Id;
  * @version 1.0-SNAPSHOT
  */
 @Entity
+@NamedQueries({
+    @NamedQuery(name = "person.findByLike", 
+            query = "select p from Person p where p.name like :search or "
+                    + "p.lastName like :search")
+})
 public class Person implements IEntity {
 
     @Id

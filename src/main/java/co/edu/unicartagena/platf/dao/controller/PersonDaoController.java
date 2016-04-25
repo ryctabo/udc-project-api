@@ -17,7 +17,11 @@
 package co.edu.unicartagena.platf.dao.controller;
 
 import co.edu.unicartagena.platf.dao.EntityDao;
+import co.edu.unicartagena.platf.dao.exception.NotCreatedEntityManagerException;
 import co.edu.unicartagena.platf.entity.Person;
+
+import java.util.Arrays;
+import java.util.List;
 
 /**
  *
@@ -29,6 +33,14 @@ public class PersonDaoController extends EntityDao<Person, Integer>
 
     public PersonDaoController() {
         super(Person.class);
+    }
+
+    @Override
+    public List<Person> findByLike(String search)
+            throws NotCreatedEntityManagerException {
+        List<Parameter> params = Arrays.asList(new Parameter("search",
+                "%" + search + "%"));
+        return executeNamedQueryForList("person.findByLike", params);
     }
 
 }
