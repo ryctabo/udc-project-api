@@ -41,7 +41,7 @@ import javax.ws.rs.core.UriInfo;
  * @author Gustavo Pacheco <ryctabo@gmail.com>
  * @version 1.0-SNAPSHOT
  */
-@Path("/persons")
+@Path("persons")
 @Consumes(MediaType.APPLICATION_JSON)
 @Produces(MediaType.APPLICATION_JSON)
 public class PersonResource {
