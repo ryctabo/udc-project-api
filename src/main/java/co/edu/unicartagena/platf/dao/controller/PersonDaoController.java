@@ -40,7 +40,7 @@ public class PersonDaoController extends EntityDao<Person, Integer>
             throws NotCreatedEntityManagerException {
         List<Parameter> params = Arrays.asList(new Parameter("search",
                 "%" + search + "%"));
-        return executeNamedQueryForList("person.findByLike", params);
+        return executeNamedQueryForList("person.findByFullName", params);
     }
 
 }

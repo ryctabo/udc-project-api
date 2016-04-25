@@ -23,6 +23,7 @@ import co.edu.unicartagena.platf.entity.Person;
 import co.edu.unicartagena.platf.model.ErrorMessage;
 
 import java.util.List;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import javax.ws.rs.BadRequestException;
@@ -57,7 +58,7 @@ public class PersonServiceImpl implements PersonService {
                     .build();
             throw new BadRequestException(response);
         }
-        
+        person.setFullName(person.toString());
         return controller.save(person);
     }
 
@@ -82,6 +83,7 @@ public class PersonServiceImpl implements PersonService {
                     .build());
         }
         person.setId(id);
+        person.setFullName(person.toString());
         Person uPerson = controller.save(person);
         return uPerson;
     }
@@ -118,11 +120,11 @@ public class PersonServiceImpl implements PersonService {
             message = "Person object is required.";
         else if (person.getCode() == null)
             message = "The code property is required.";
-        else if (person.getCode().matches("[0-9]+"))
+        else if (!person.getCode().matches("[0-9]+"))
             message = "The code property is a string with number only.";
-        else if (!"".equals(person.getName()))
+        else if (person.getName() == null || "".equals(person.getName()))
             message = "The name property is required.";
-        else if (!"".equals(person.getLastName()))
+        else if (person.getLastName() == null || "".equals(person.getLastName()))
             message = "The last name property is required.";
         return message;
     }
@@ -137,6 +139,7 @@ public class PersonServiceImpl implements PersonService {
                     .build());
         }
         List<Person> people = null;
+        LOG.log(Level.INFO, "Search: {0}", search);
         try {
              people = this.controller.findByLike(search);
         } catch (NotCreatedEntityManagerException ex) {

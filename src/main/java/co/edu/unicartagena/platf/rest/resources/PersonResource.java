@@ -51,7 +51,7 @@ public class PersonResource {
     @GET
     public List<Person> getAllPeople(@QueryParam("like") String like) {
         if (like != null && !"".equals(like)) {
-            
+            service.findPersonByFullName(like);
         }
         return service.getAll();
     }

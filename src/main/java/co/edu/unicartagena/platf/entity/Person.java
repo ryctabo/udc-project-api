@@ -22,6 +22,10 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
+import javax.xml.bind.annotation.XmlType;
 
 /**
  *
@@ -29,13 +33,14 @@ import javax.persistence.NamedQuery;
  * @version 1.0-SNAPSHOT
  */
 @Entity
+@XmlRootElement
+@XmlType(propOrder = {"id", "code", "name", "lastName"})
 @NamedQueries({
-    @NamedQuery(name = "person.findByLike", 
-            query = "select p from Person p where p.name like :search or "
-                    + "p.lastName like :search")
+    @NamedQuery(name = "person.findByFullName", 
+            query = "select p from Person p where p.fullName like :search")
 })
 public class Person implements IEntity {
-
+    
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
@@ -43,12 +48,16 @@ public class Person implements IEntity {
     @Column(unique = true, length = 10, nullable = true)
     private String code;
 
-    @Column(length = 100, nullable = false)
+    @Column(length = 70, nullable = false)
     private String name;
 
-    @Column(name = "last_name", nullable = false, length = 100)
+    @XmlElement(name = "last_name")
+    @Column(name = "last_name", nullable = false, length = 70)
     private String lastName;
 
+    @Column(name = "full_name", nullable = false, length = 150)
+    private String fullName;
+    
     public Person() {
     }
 
@@ -88,6 +97,15 @@ public class Person implements IEntity {
 
     public void setLastName(String lastName) {
         this.lastName = lastName;
+    }
+
+    @XmlTransient
+    public String getFullName() {
+        return fullName;
+    }
+
+    public void setFullName(String fullName) {
+        this.fullName = fullName;
     }
 
     @Override
