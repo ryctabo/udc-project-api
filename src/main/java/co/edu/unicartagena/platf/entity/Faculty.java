@@ -37,7 +37,7 @@ import javax.xml.bind.annotation.XmlType;
  */
 @Entity
 @XmlRootElement
-@XmlType(propOrder = {"id", "code", "name"})
+@XmlType(propOrder = {"id", "code", "name", "nomenclature"})
 public class Faculty implements IEntity {
     
     @Id
@@ -101,6 +101,14 @@ public class Faculty implements IEntity {
 
     public List<Program> getPrograms() {
         return programs;
+    }
+
+    public String getNomenclature() {
+        return nomenclature;
+    }
+
+    public void setNomenclature(String nomenclature) {
+        this.nomenclature = nomenclature;
     }
 
     public void addProgram(Program program) {

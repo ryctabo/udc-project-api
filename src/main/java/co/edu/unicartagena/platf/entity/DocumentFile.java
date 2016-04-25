@@ -27,8 +27,10 @@ import javax.persistence.Id;
 import javax.persistence.OneToOne;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
+import javax.xml.bind.annotation.XmlType;
 
 /**
  *
@@ -37,6 +39,7 @@ import javax.xml.bind.annotation.XmlTransient;
  */
 @Entity
 @XmlRootElement
+@XmlType(propOrder = {"id", "name", "created"})
 public class DocumentFile implements IEntity {
     
     @Id
@@ -50,8 +53,7 @@ public class DocumentFile implements IEntity {
     @Temporal(TemporalType.TIMESTAMP)
     private Calendar created;
     
-    @XmlTransient
-    @OneToOne(fetch = FetchType.LAZY, mappedBy = "docType")
+    @OneToOne(fetch = FetchType.LAZY, mappedBy = "docFile")
     private Document document;
 
     public DocumentFile() {
@@ -84,6 +86,15 @@ public class DocumentFile implements IEntity {
 
     public void setCreated(Calendar created) {
         this.created = created;
+    }
+
+    @XmlTransient
+    public Document getDocument() {
+        return document;
+    }
+
+    public void setDocument(Document document) {
+        this.document = document;
     }
 
 }

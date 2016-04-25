@@ -34,7 +34,7 @@ import javax.xml.bind.annotation.XmlType;
  */
 @Entity
 @XmlRootElement
-@XmlType(propOrder = {"id", "code", "name", "facultyId"})
+@XmlType(propOrder = {"id", "code", "name", "nomenclature", "facultyId"})
 @NamedQueries({
     @NamedQuery(name = "program.findByFacultyId",
             query = "select p from Program p where p.facultyId = :facultyId")
@@ -96,6 +96,14 @@ public class Program implements IEntity {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public String getNomenclature() {
+        return nomenclature;
+    }
+
+    public void setNomenclature(String nomenclature) {
+        this.nomenclature = nomenclature;
     }
 
     public int getFacultyId() {

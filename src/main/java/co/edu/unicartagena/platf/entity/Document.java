@@ -19,7 +19,6 @@ import java.util.Calendar;
 import java.util.List;
 
 import javax.persistence.Column;
-import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
@@ -30,7 +29,6 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
-import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
@@ -47,7 +45,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 public class Document implements IEntity {
 
     public enum DocumentType {
-
+        
         DOCUMENT("DOCUMENTO"),
         RESOLUTION("RESOLUCION"),
         ESTATE("ESTAMENTO");
@@ -61,9 +59,8 @@ public class Document implements IEntity {
         public String getName() {
             return name;
         }
-
     }
-
+    
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
@@ -71,9 +68,7 @@ public class Document implements IEntity {
     @Column(nullable = false)
     private String name;
 
-    @ElementCollection(fetch = FetchType.EAGER, targetClass = DocumentType.class)
-    @JoinTable(name = "type", joinColumns = @JoinColumn(name = "document_id"))
-    @Column(name = "role_id", nullable = false)
+    @Column(name = "type_id", nullable = false)
     @Enumerated(EnumType.STRING)
     private DocumentType type;
 
@@ -81,17 +76,17 @@ public class Document implements IEntity {
     @JoinColumn(name = "doc_file_id", nullable = false)
     private DocumentFile docFile;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "faculy_id", nullable = false)
     private Faculty faculty;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "program_id")
     private Program program;
 
     @ManyToMany
     @JoinTable(
-            name = "person_of_document",
+            name = "document_person",
             joinColumns = @JoinColumn(name = "doc_id",
                     referencedColumnName = "id"),
             inverseJoinColumns = @JoinColumn(name = "person_id",
