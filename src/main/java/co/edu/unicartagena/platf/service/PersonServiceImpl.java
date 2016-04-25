@@ -31,7 +31,11 @@ import javax.ws.rs.NotFoundException;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Response;
 
-
+/**
+ * 
+ * @author Gustavo Pacheco <ryctabo@gmail.com>
+ * @version 1.0-SNAPSHOT
+ */
 public class PersonServiceImpl implements PersonService {
     
     PersonDao controller = new PersonDaoController();
