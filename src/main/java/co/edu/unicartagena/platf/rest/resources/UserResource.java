@@ -15,7 +15,7 @@
  */
 package co.edu.unicartagena.platf.rest.resources;
 
-import co.edu.unicartagena.platf.entity.Person;
+import co.edu.unicartagena.platf.entity.UserDetail;
 import co.edu.unicartagena.platf.entity.User;
 import co.edu.unicartagena.platf.service.UserService;
 import co.edu.unicartagena.platf.service.UserServiceImpl;
@@ -50,19 +50,19 @@ public class UserResource {
     UserService service = UserServiceImpl.getInstance();
     
     @GET
-    public List<Person> getAllUsers() {
-        final List<Person> people = new ArrayList<>();
+    public List<UserDetail> getAllUsers() {
+        final List<UserDetail> people = new ArrayList<>();
         for (User user : service.getAll()) {
-            if (user instanceof Person) {
-                people.add((Person) user);
+            if (user instanceof UserDetail) {
+                people.add((UserDetail) user);
             }
         }
         return people;
     }
     
     @POST
-    public Response addUser(Person userPerson, @Context UriInfo uriInfo) {
-        Person newUserPerson = (Person) service.add(userPerson);
+    public Response addUser(UserDetail userPerson, @Context UriInfo uriInfo) {
+        UserDetail newUserPerson = (UserDetail) service.add(userPerson);
         String username = newUserPerson.getUsername();
         URI uri = uriInfo.getAbsolutePathBuilder().path(username).build();
         return Response.created(uri)
@@ -72,8 +72,8 @@ public class UserResource {
     
     @PUT
     @Path("{userId}")
-    public Person updateUser(@PathParam("userId") Integer userId, Person person) {
-        return (Person) service.update(userId, person);
+    public UserDetail updateUser(@PathParam("userId") Integer userId, UserDetail person) {
+        return (UserDetail) service.update(userId, person);
     }
     
     @DELETE
@@ -86,8 +86,8 @@ public class UserResource {
     @Path("{username}")
     public Response getUserByUsername(@PathParam("username") String username) {
         User user = service.findByUsernameOrEmail(username);
-        if (user instanceof Person) {
-            Person person = (Person) user;
+        if (user instanceof UserDetail) {
+            UserDetail person = (UserDetail) user;
             return Response.ok(person).build();
         }
         return Response.ok(user).build();

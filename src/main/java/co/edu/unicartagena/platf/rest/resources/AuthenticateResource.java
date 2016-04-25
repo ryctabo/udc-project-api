@@ -15,7 +15,7 @@
  */
 package co.edu.unicartagena.platf.rest.resources;
 
-import co.edu.unicartagena.platf.entity.Person;
+import co.edu.unicartagena.platf.entity.UserDetail;
 import co.edu.unicartagena.platf.entity.RoleType;
 import co.edu.unicartagena.platf.entity.User;
 import co.edu.unicartagena.platf.exception.TokenNotGeneratedException;
@@ -82,8 +82,8 @@ public class AuthenticateResource {
                 userInfo.setUsername(user.getUsername());
                 userInfo.setEmail(user.getEmail());
 
-                if (user instanceof Person) {
-                    userInfo.setName(((Person) user).toString());
+                if (user instanceof UserDetail) {
+                    userInfo.setName(((UserDetail) user).toString());
                 } else if (user.getRoles().contains(RoleType.ADMINISTRATOR)) {
                     userInfo.setName("Admin user");
                 } else {
