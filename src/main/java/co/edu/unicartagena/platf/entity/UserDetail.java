@@ -32,7 +32,7 @@ import javax.xml.bind.annotation.XmlType;
 @XmlRootElement
 @XmlType(propOrder = {"name", "lastName"})
 @PrimaryKeyJoinColumn(referencedColumnName = "id")
-public class Person extends User {
+public class UserDetail extends User {
     
     @Column(length = 100)
     private String name;
@@ -41,18 +41,18 @@ public class Person extends User {
     @XmlElement(name = "last_name")
     private String lastName;
 
-    public Person() {
+    public UserDetail() {
     }
 
-    public Person(String email, String password) {
+    public UserDetail(String email, String password) {
         super(email, password);
     }
 
-    public Person(String username, String email, String password) {
+    public UserDetail(String username, String email, String password) {
         super(username, email, password);
     }
 
-    public Person(String name, String lastName, String email, String password) {
+    public UserDetail(String name, String lastName, String email, String password) {
         super(email, password);
         this.name = name;
         this.lastName = lastName;
