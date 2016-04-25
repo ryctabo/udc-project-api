@@ -50,6 +50,9 @@ public class Faculty implements IEntity {
     @Column(length = 50, nullable = false)
     private String name;
     
+    @Column(length = 3, nullable = false, unique = true)
+    private String nomenclature;
+    
     @OneToMany
     @XmlTransient
     @JoinColumn(name = "faculty_id", referencedColumnName = "id")
@@ -62,6 +65,13 @@ public class Faculty implements IEntity {
     public Faculty(String code, String name) {
         this.code = code;
         this.name = name;
+        this.programs = new ArrayList<>();
+    }
+
+    public Faculty(String code, String name, String nomenclature) {
+        this.code = code;
+        this.name = name;
+        this.nomenclature = nomenclature;
         this.programs = new ArrayList<>();
     }
 

@@ -51,6 +51,9 @@ public class Program implements IEntity {
     @Column(length = 100, nullable = false)
     private String name;
     
+    @Column(length = 3, nullable = false, unique = true)
+    private String nomenclature;
+    
     @Column(name = "faculty_id")
     @XmlElement(name = "faculty_id")
     private int facultyId;
@@ -61,6 +64,13 @@ public class Program implements IEntity {
     public Program(String code, String name, int facultyId) {
         this.code = code;
         this.name = name;
+        this.facultyId = facultyId;
+    }
+
+    public Program(String code, String name, String nomenclature, int facultyId) {
+        this.code = code;
+        this.name = name;
+        this.nomenclature = nomenclature;
         this.facultyId = facultyId;
     }
 
