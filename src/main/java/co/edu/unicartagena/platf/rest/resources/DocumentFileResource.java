@@ -33,6 +33,7 @@ import java.util.List;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
+import javax.ws.rs.InternalServerErrorException;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
@@ -97,8 +98,18 @@ public class DocumentFileResource {
     @DELETE
     @Path("{documentId}")
     @Produces(MediaType.APPLICATION_JSON)
-    public DocumentFile removeDocumentFile(@PathParam("documentFile") Integer id) {
-        return service.remove(id);
+    public DocumentFile removeDocumentFile(@PathParam("documentId") Integer id) {
+        DocumentFile document = service.get(id);
+        if (fileService.delete(FileService.FileType.DOCUMENT, document.getName()))
+            return service.remove(id);
+        else {
+            String msg = String.format("Could not delete the file with id %d.", id);
+            ErrorMessage em = new ErrorMessage(500, msg);
+            throw new InternalServerErrorException(Response
+                    .status(Response.Status.INTERNAL_SERVER_ERROR)
+                    .entity(em)
+                    .build());
+        }
     }
     
     @GET
