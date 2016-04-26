@@ -15,6 +15,7 @@
  */
 package co.edu.unicartagena.platf.entity;
 
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 
@@ -32,8 +33,11 @@ import javax.persistence.ManyToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import javax.persistence.Transient;
 
+import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
 
 /**
  *
@@ -44,7 +48,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 @XmlRootElement
 public class Document implements IEntity {
 
-    public enum DocumentType {
+    public enum Type {
         
         DOCUMENT("DOCUMENTO"),
         RESOLUTION("RESOLUCION"),
@@ -52,7 +56,7 @@ public class Document implements IEntity {
 
         private final String name;
 
-        private DocumentType(String name) {
+        private Type(String name) {
             this.name = name;
         }
 
@@ -70,11 +74,15 @@ public class Document implements IEntity {
 
     @Column(name = "type_id", nullable = false)
     @Enumerated(EnumType.STRING)
-    private DocumentType type;
+    private Type type;
 
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "doc_file_id", nullable = false)
     private DocumentFile docFile;
+    
+    @Transient
+    @XmlElement(name = "doc_file_id")
+    private int docFileId;
 
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "faculy_id", nullable = false)
@@ -106,15 +114,21 @@ public class Document implements IEntity {
     private Calendar modified;
 
     public Document() {
+        this.people = new ArrayList<>();
+        this.created = Calendar.getInstance();
+        this.modified = Calendar.getInstance();
     }
 
-    public Document(String name, DocumentType type, DocumentFile docFile,
+    public Document(String name, Type type, DocumentFile docFile,
             Faculty faculty, Calendar exp) {
         this.name = name;
         this.type = type;
         this.docFile = docFile;
         this.faculty = faculty;
         this.exp = exp;
+        this.people = new ArrayList<>();
+        this.created = Calendar.getInstance();
+        this.modified = Calendar.getInstance();
     }
 
     public int getId() {
@@ -133,14 +147,15 @@ public class Document implements IEntity {
         this.name = name;
     }
 
-    public DocumentType getType() {
+    public Type getType() {
         return type;
     }
 
-    public void setType(DocumentType type) {
+    public void setType(Type type) {
         this.type = type;
     }
 
+    @XmlTransient
     public DocumentFile getDocFile() {
         return docFile;
     }
@@ -148,6 +163,15 @@ public class Document implements IEntity {
     public void setDocFile(DocumentFile docFile) {
         this.docFile = docFile;
     }
+    
+    public int getDocFileId() {
+        return docFileId;
+    }
+
+    public void setDocFileId(int docFileId) {
+        this.docFileId = docFileId;
+    }
+
 
     public Faculty getFaculty() {
         return faculty;
