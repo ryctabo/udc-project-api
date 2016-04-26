@@ -16,7 +16,10 @@
 
 package co.edu.unicartagena.platf.service;
 
-import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+
 import org.glassfish.jersey.media.multipart.FormDataContentDisposition;
 
 /**
@@ -38,12 +41,14 @@ public interface FileService {
     
     String FORMAT_FILE_DOCUMENT = "DOC_%s.%s";
     
-    String upload(FileInputStream fileInputStream,
+    String upload(InputStream inputStream,
             FormDataContentDisposition fileMetaData);    
     
     boolean delete(FileType type, String fileName);
     
     String getPathName(FileType type, String fileName);
+    
+    void write(InputStream in, final OutputStream out) throws IOException;
     
     enum FileType {
         DOCUMENT, IMAGE
