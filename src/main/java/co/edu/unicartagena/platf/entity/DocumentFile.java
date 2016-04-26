@@ -62,6 +62,7 @@ public class DocumentFile implements IEntity {
 
     public DocumentFile(String name) {
         this.name = name;
+        this.created = Calendar.getInstance();
     }
 
     public int getId() {
