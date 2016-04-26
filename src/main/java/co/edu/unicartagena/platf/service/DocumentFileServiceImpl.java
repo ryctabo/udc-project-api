@@ -22,6 +22,7 @@ import co.edu.unicartagena.platf.model.ErrorMessage;
 import java.util.List;
 import javax.ws.rs.BadRequestException;
 import javax.ws.rs.NotFoundException;
+import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 /**
@@ -77,6 +78,7 @@ public class DocumentFileServiceImpl implements DocumentFileService {
             ErrorMessage em = new ErrorMessage(404, msg);
             throw new NotFoundException(Response
                     .status(Response.Status.NOT_FOUND)
+                    .type(MediaType.APPLICATION_JSON)
                     .entity(em)
                     .build());
         }

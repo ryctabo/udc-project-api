@@ -71,14 +71,16 @@ public class FileServiceImpl implements FileService {
         if (ext.matches("jpg|jpeg|png")) {
             throw new WebApplicationException("Not implement feature.");
         } else if (ext.matches("pdf")) {
-            String serial = UUID.randomUUID().toString().replace("-", "");
+            String serial = UUID.randomUUID().toString().replace("-", "").toUpperCase();
             newFileName = String.format(FORMAT_FILE_DOCUMENT, serial, ext);
             
             PathBuild pathBuild = getPathBuild()
-                    .path(FOLDER_BASE, FOLDER_DOCUMENTS);
+                    .path(PATH_BASE, FOLDER_BASE, FOLDER_DOCUMENTS);
 
             final String PATHNAME = pathBuild.build(newFileName);
             final String URL_FOLDER = pathBuild.build();
+            
+            LOG.log(Level.INFO, "PATHNAME={0}", PATHNAME);
 
             saveFile(URL_FOLDER, PATHNAME, fileInputStream);
         } else {
@@ -105,7 +107,7 @@ public class FileServiceImpl implements FileService {
     @Override
     public String getPathName(FileType type, String fileName) {
         return getPathBuild()
-            .path(FOLDER_BASE)
+            .path(PATH_BASE, FOLDER_BASE)
             .path((type == FileType.DOCUMENT ? FOLDER_DOCUMENTS : FOLDER_IMAGE))
             .build(fileName);
     }

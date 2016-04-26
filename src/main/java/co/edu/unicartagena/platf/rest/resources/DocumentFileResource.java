@@ -103,7 +103,6 @@ public class DocumentFileResource {
     
     @GET
     @Path("{documentId}")
-    @Produces("application/pdf")
     public Response downloadDocumentFile(@PathParam("documentId") Integer id) {
         final DocumentFile documentFile = service.get(id);
         StreamingOutput streamingOutput = new StreamingOutput() {
@@ -118,6 +117,7 @@ public class DocumentFileResource {
             }
         };
         return Response.ok(streamingOutput)
+                .type("application/pdf")
                 .header("Content-Disposition", "filename=" + "document.pdf")
                 .build();
     }
