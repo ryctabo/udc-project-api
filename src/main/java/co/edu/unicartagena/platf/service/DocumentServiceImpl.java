@@ -24,7 +24,6 @@ import co.edu.unicartagena.platf.entity.Faculty;
 import co.edu.unicartagena.platf.entity.Person;
 import co.edu.unicartagena.platf.entity.Program;
 import co.edu.unicartagena.platf.model.ErrorMessage;
-import java.util.Calendar;
 
 import java.util.List;
 
@@ -45,6 +44,10 @@ public class DocumentServiceImpl implements DocumentService {
     
     DocumentFileService fileService = DocumentFileServiceImpl.getInstance();
     
+    FacultyService facultyService = FacultyServiceImpl.getInstance();
+    
+    ProgramService programService = ProgramServiceImpl.getInstance();
+    
     private DocumentServiceImpl(){}
     
     public static DocumentService getInstance() {
@@ -59,6 +62,14 @@ public class DocumentServiceImpl implements DocumentService {
         
         DocumentFile documentFile = fileService.get(document.getDocFileId());
         document.setDocFile(documentFile);
+        
+        Faculty faculty = facultyService.get(document.getFacultyId());
+        document.setFaculty(faculty);
+        
+        if (document.getProgramId() > 0) {
+            Program program = programService.get(document.getProgramId());
+            document.setProgram(program);
+        }
         
         String nameDoc = generateNameDocument(document);
         document.setName(nameDoc);
@@ -119,11 +130,10 @@ public class DocumentServiceImpl implements DocumentService {
         name += String.format("%s_%08d", document.getType().getName(),
                 document.getDocFile().getId());
         if (document.getPeople().size() == 1) {
-            name += "_" + document.getPeople()
-                    .iterator()
-                    .next()
-                    .toString()
-                    .replace(" ", "_");
+            Person person = document.getPeople().iterator().next();
+            String firstName = person.getName().split(" ")[0];
+            String lastName = person.getLastName().split(" ")[0];
+            name += String.format("_%s_%s", firstName, lastName);
         }
         name = name.toUpperCase() + ".pdf";
         return name;
@@ -133,12 +143,14 @@ public class DocumentServiceImpl implements DocumentService {
         String message = null;
         if (document == null) {
             message = "The document can not be null, is required.";
-        } else if (document.getType() != null) {
+        } else if (document.getType() == null) {
             message = "The type document is required.";
         } else if (document.getDocFileId() <= 0) {
             message = "The document id is required.";
-        } else if (document.getExp() != null) {
-            message = "The faculty is required.";
+        } else if (document.getFacultyId() <= 0) {
+            message = "The faculty id is required.";
+        } else if (document.getExp() == null) {
+            message = "The exp property is required.";
         }
 
         if (message != null) {
@@ -149,25 +161,6 @@ public class DocumentServiceImpl implements DocumentService {
                     .entity(em)
                     .build());
         }
-    }
-    
-    public static void main(String[] args) {
-        DocumentService service = DocumentServiceImpl.getInstance();
-        
-        Faculty faculty = new Faculty("020", "INGENIERIA", "ING");
-        Program program = new Program("022", "INGENIERIA DE SISTEMAS", "SIS", 0);
-        
-        Person person = new Person("0221010030", "GUSTAVO", "PACHECO GOMEZ");
-        
-        DocumentFile documentFile = new DocumentFile();
-        documentFile.setId(6837043);
-        Document document = new Document("", Document.Type.RESOLUTION,
-                documentFile, faculty, Calendar.getInstance());
-        document.setProgram(program);
-        document.getPeople().add(person);
-        
-        String docName = service.generateNameDocument(document);
-        System.out.println(docName);
     }
 
 }

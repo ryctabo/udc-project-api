@@ -19,6 +19,8 @@ package co.edu.unicartagena.platf.dao.controller;
 import co.edu.unicartagena.platf.dao.EntityDao;
 import co.edu.unicartagena.platf.entity.Document;
 
+import java.util.List;
+
 /**
  *
  * @author Gustavo Pacheco <ryctabo@gmail.com>
@@ -29,6 +31,37 @@ public class DocumentDaoController extends EntityDao<Document, Integer>
 
     public DocumentDaoController() {
         super(Document.class);
+    }
+
+    @Override
+    public Document save(Document entity) {
+        Document doc = super.save(entity);
+        changeState(doc);
+        return doc;
+    }
+    
+    @Override
+    public Document find(Integer id) {
+        Document document = super.find(id);
+        changeState(document);
+        return document;
+    }
+
+    @Override
+    public List<Document> findAll() {
+        List<Document> documents = super.findAll();
+        for (Document doc : documents)
+            changeState(doc);
+        return documents;
+    }
+
+    private void changeState(Document document) {
+        if (document == null)
+            return;
+        document.setDocFileId(document.getDocFile().getId());
+        document.setFacultyId(document.getFaculty().getId());
+        if (document.getProgram() != null)
+            document.setProgramId(document.getProgram().getId());
     }
     
 }

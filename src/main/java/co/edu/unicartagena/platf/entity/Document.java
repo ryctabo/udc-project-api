@@ -36,8 +36,11 @@ import javax.persistence.TemporalType;
 import javax.persistence.Transient;
 
 import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlEnum;
+import javax.xml.bind.annotation.XmlEnumValue;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
+import javax.xml.bind.annotation.XmlType;
 
 /**
  *
@@ -46,13 +49,18 @@ import javax.xml.bind.annotation.XmlTransient;
  */
 @Entity
 @XmlRootElement
+@XmlType(propOrder = {
+    "id", "name", "type", "docFileId", "facultyId", "programId", "people",
+    "exp", "created", "modified"
+})
 public class Document implements IEntity {
 
+    @XmlEnum(String.class)
     public enum Type {
         
-        DOCUMENT("DOCUMENTO"),
-        RESOLUTION("RESOLUCION"),
-        ESTATE("ESTAMENTO");
+        @XmlEnumValue("DOCUMENTO") DOCUMENT("DOCUMENTO"),
+        @XmlEnumValue("RESOLUCION") RESOLUTION("RESOLUCION"),
+        @XmlEnumValue("ESTAMENTO") ESTATE("ESTAMENTO");
 
         private final String name;
 
@@ -72,27 +80,35 @@ public class Document implements IEntity {
     @Column(nullable = false)
     private String name;
 
-    @Column(name = "type_id", nullable = false)
+    @Column(name = "type", nullable = false)
     @Enumerated(EnumType.STRING)
     private Type type;
 
-    @OneToOne(fetch = FetchType.LAZY)
+    @OneToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "doc_file_id", nullable = false)
     private DocumentFile docFile;
     
     @Transient
-    @XmlElement(name = "doc_file_id")
+    @XmlElement(name = "doc_id")
     private int docFileId;
 
-    @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "faculy_id", nullable = false)
+    @OneToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "faculty_id", nullable = false)
     private Faculty faculty;
+    
+    @Transient
+    @XmlElement(name = "faculty_id")
+    private int facultyId;
 
-    @OneToOne(fetch = FetchType.LAZY)
+    @OneToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "program_id")
     private Program program;
+    
+    @Transient
+    @XmlElement(name = "program_id")
+    private int programId;
 
-    @ManyToMany
+    @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(
             name = "document_person",
             joinColumns = @JoinColumn(name = "doc_id",
@@ -124,7 +140,9 @@ public class Document implements IEntity {
         this.name = name;
         this.type = type;
         this.docFile = docFile;
+        this.docFileId = docFile.getId();
         this.faculty = faculty;
+        this.facultyId = faculty.getId();
         this.exp = exp;
         this.people = new ArrayList<>();
         this.created = Calendar.getInstance();
@@ -162,6 +180,7 @@ public class Document implements IEntity {
 
     public void setDocFile(DocumentFile docFile) {
         this.docFile = docFile;
+        this.docFileId = docFile.getId();
     }
     
     public int getDocFileId() {
@@ -172,21 +191,40 @@ public class Document implements IEntity {
         this.docFileId = docFileId;
     }
 
-
+    @XmlTransient
     public Faculty getFaculty() {
         return faculty;
     }
 
     public void setFaculty(Faculty faculty) {
         this.faculty = faculty;
+        this.facultyId = faculty.getId();
     }
 
+    public int getFacultyId() {
+        return facultyId;
+    }
+
+    public void setFacultyId(int facultyId) {
+        this.facultyId = facultyId;
+    }
+    
+    @XmlTransient
     public Program getProgram() {
         return program;
     }
 
     public void setProgram(Program program) {
         this.program = program;
+        this.programId = program.getId();
+    }
+    
+    public int getProgramId() {
+        return programId;
+    }
+
+    public void setProgramId(int programId) {
+        this.programId = programId;
     }
 
     public List<Person> getPeople() {
