@@ -25,7 +25,6 @@ import javax.persistence.NamedQuery;
 
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
 
 /**
@@ -35,7 +34,7 @@ import javax.xml.bind.annotation.XmlType;
  */
 @Entity
 @XmlRootElement
-@XmlType(propOrder = {"id", "code", "name", "lastName"})
+@XmlType(propOrder = {"id", "code", "name", "lastName", "fullName"})
 @NamedQueries({
     @NamedQuery(name = "person.findByFullName", 
             query = "select p from Person p where p.fullName like :search")
@@ -100,7 +99,6 @@ public class Person implements IEntity {
         this.lastName = lastName;
     }
 
-    @XmlTransient
     public String getFullName() {
         return fullName;
     }
