@@ -35,10 +35,9 @@ public class WebApplicationExceptionMapper
 
     @Override
     public Response toResponse(WebApplicationException e) {
-        int status = e.getResponse().getStatus();
-        String message = e.getMessage();
-        
-        ErrorMessage errorMessage = new ErrorMessage(status, message);
+        ErrorMessage errorMessage = new ErrorMessage(
+                e.getResponse().getStatus(),
+                e.getMessage());
         return Response.fromResponse(e.getResponse())
                 .entity(errorMessage)
                 .type(MediaType.APPLICATION_JSON)
