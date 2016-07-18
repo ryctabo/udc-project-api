@@ -15,30 +15,26 @@
  */
 package co.edu.unicartagena.platf.rest.resources;
 
-import co.edu.unicartagena.platf.entity.UserDetail;
-import co.edu.unicartagena.platf.entity.RoleType;
-import co.edu.unicartagena.platf.entity.User;
-import co.edu.unicartagena.platf.exception.TokenNotGeneratedException;
-import co.edu.unicartagena.platf.model.ErrorMessage;
-import co.edu.unicartagena.platf.rest.TokenUtil;
+import co.edu.unicartagena.platf.model.Message;
 import co.edu.unicartagena.platf.service.UserService;
 import co.edu.unicartagena.platf.service.UserServiceImpl;
 import co.edu.unicartagena.platf.transfer.TokenTransfer;
 import co.edu.unicartagena.platf.transfer.LoginTransfer;
-
+import co.edu.unicartagena.platf.transfer.ResetTransfer;
 import java.util.logging.Level;
+
 import java.util.logging.Logger;
 
+import javax.ws.rs.BadRequestException;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
-import javax.ws.rs.WebApplicationException;
+import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
-import org.jose4j.lang.JoseException;
 
 /**
  *
@@ -59,70 +55,34 @@ public class AccountResource {
     public String test() {
         return "Authenticate please!";
     }
+    
+    @GET
+    @Path("pin")
+    public Message sendPin(@QueryParam("q") String email) {
+        LOG.log(Level.INFO, "Email to send {0}", email);
+        service.sendPin(email);
+        return new Message(200, String.format("It sent a pin to %s", email));
+    }
 
     @POST
     @Path("login")
     public Response authenticate(LoginTransfer loginTransfer) {
-        if (loginTransfer == null) {
-            ErrorMessage em = new ErrorMessage(
-                    Response.Status.BAD_REQUEST.getStatusCode(),
-                    "Information for login is required.");
-            return Response.status(Response.Status.BAD_REQUEST)
-                    .entity(em)
-                    .build();
-        }
-
-        String usernameOrEmail = loginTransfer.getUsername();
-        String password = loginTransfer.getPassword();
-
-        if (service.login(usernameOrEmail, password)) {
-            User user = service.findByUsernameOrEmail(usernameOrEmail);
-            String token;
-
-            try {
-                TokenUtil.UserInfo userInfo = new TokenUtil.UserInfo();
-                userInfo.setId(user.getId());
-                userInfo.setUsername(user.getUsername());
-                userInfo.setEmail(user.getEmail());
-
-                if (user instanceof UserDetail) {
-                    userInfo.setName(((UserDetail) user).toString());
-                } else if (user.getRoles().contains(RoleType.ADMINISTRATOR)) {
-                    userInfo.setName("Admin user");
-                } else {
-                    userInfo.setName("Not define.");
-                }
-
-                token = TokenUtil.generateToken(userInfo);
-            } catch (JoseException | TokenNotGeneratedException ex) {
-                LOG.log(Level.SEVERE, null, ex);
-                ErrorMessage em = new ErrorMessage(
-                        Response.Status.INTERNAL_SERVER_ERROR.getStatusCode(),
-                        ex.getMessage());
-                Response response = Response
-                        .status(Response.Status.INTERNAL_SERVER_ERROR)
-                        .entity(em)
-                        .build();
-                throw new WebApplicationException(response);
-            }
-            return Response
-                    .ok(new TokenTransfer(token))
-                    .build();
-        } else {
-            ErrorMessage em = new ErrorMessage(
-                    Response.Status.UNAUTHORIZED.getStatusCode(),
-                    "Username or password is not valid.");
-            return Response.status(Response.Status.UNAUTHORIZED)
-                    .entity(em)
-                    .build();
-        }
+        if (loginTransfer == null)
+            throw new BadRequestException("Information for login is required.");
+        
+        TokenTransfer token = new TokenTransfer(service.login(
+                loginTransfer.getUsername(), loginTransfer.getPassword()));
+        
+        return Response.ok(token)
+                .build();
     }
 
     @POST
     @Path("reset")
-    @Produces(MediaType.TEXT_PLAIN)
-    public String resetPassword() {
-        return "This is reset password!";
+    public Message reset(ResetTransfer reset) {
+        LOG.info(reset.toString());
+        service.reset(reset.getEmail(), reset.getPassword(), reset.getPin());
+        return new Message(200, "Change password successful!");
     }
 
 }

@@ -22,7 +22,7 @@ import co.edu.unicartagena.platf.dao.controller.ProgramDaoController;
 import co.edu.unicartagena.platf.dao.exception.NotCreatedEntityManagerException;
 import co.edu.unicartagena.platf.entity.Faculty;
 import co.edu.unicartagena.platf.entity.Program;
-import co.edu.unicartagena.platf.model.ErrorMessage;
+import co.edu.unicartagena.platf.model.Message;
 
 import java.util.List;
 import java.util.logging.Level;
@@ -61,7 +61,7 @@ public class ProgramServiceImpl implements ProgramService {
         if (program == null) {
             throw new BadRequestException("The program is null, this is required.");
         } else if (program.getFacultyId() <= 0) {
-            ErrorMessage me = new ErrorMessage(400, "The faculty id is null, "
+            Message me = new Message(400, "The faculty id is null, "
                     + "this is required.");
             Response response = Response.status(Response.Status.BAD_REQUEST)
                     .entity(me)
@@ -73,7 +73,7 @@ public class ProgramServiceImpl implements ProgramService {
             if (faculty == null) {
                 String msg = String
                         .format("The faculty with id %d not found.", facultyId);
-                ErrorMessage em = new ErrorMessage(400, msg);
+                Message em = new Message(400, msg);
                 Response response = Response.status(Response.Status.BAD_REQUEST)
                         .entity(em)
                         .build();
@@ -86,7 +86,7 @@ public class ProgramServiceImpl implements ProgramService {
     @Override
     public Program update(Integer id, Program program) {
         if (id == null || id <= 0) {
-            ErrorMessage em = new ErrorMessage(400, "The program id is required.");
+            Message em = new Message(400, "The program id is required.");
             Response response = Response.status(Response.Status.BAD_REQUEST)
                     .entity(em)
                     .build();
@@ -95,7 +95,7 @@ public class ProgramServiceImpl implements ProgramService {
             get(id);
         }
         if (program == null) {
-            ErrorMessage em = new ErrorMessage(400, "The program entity is "
+            Message em = new Message(400, "The program entity is "
                     + "required, all attributes are necessary.");
             Response response = Response.status(Response.Status.BAD_REQUEST)
                     .entity(em)
@@ -119,7 +119,7 @@ public class ProgramServiceImpl implements ProgramService {
         Program program = programController.find(id);
         if (program == null) {
             String msg = String.format("The program with id %d not found.", id);
-            ErrorMessage em = new ErrorMessage(404, msg);
+            Message em = new Message(404, msg);
             Response response = Response.status(Response.Status.NOT_FOUND)
                     .entity(em)
                     .build();
@@ -138,7 +138,7 @@ public class ProgramServiceImpl implements ProgramService {
         if (start < 0) {
             String msg = String.format("The start parameter is equal to %d, "
                     + "it should not be less than 0.", start);
-            ErrorMessage em = new ErrorMessage(400, msg);
+            Message em = new Message(400, msg);
             Response response = Response.status(Response.Status.BAD_REQUEST)
                     .entity(em)
                     .build();
@@ -147,7 +147,7 @@ public class ProgramServiceImpl implements ProgramService {
         if (size <= 0) {
             String msg = String.format("The size parameter is equal to %d, "
                     + "it must be greater than 0.", size);
-            ErrorMessage em = new ErrorMessage(400, msg);
+            Message em = new Message(400, msg);
             Response response = Response.status(Response.Status.BAD_REQUEST)
                     .entity(em)
                     .build();
@@ -159,7 +159,7 @@ public class ProgramServiceImpl implements ProgramService {
     @Override
     public List<Program> getAllProgramByFacultyId(Integer facultyId) {
         if (facultyId == null) {
-            ErrorMessage em = new ErrorMessage(400, "The faculty id is null, "
+            Message em = new Message(400, "The faculty id is null, "
                     + "it's required.");
             Response response = Response.status(Response.Status.BAD_REQUEST)
                     .entity(em)

@@ -16,7 +16,7 @@
 
 package co.edu.unicartagena.platf.rest.mapper;
 
-import co.edu.unicartagena.platf.model.ErrorMessage;
+import co.edu.unicartagena.platf.model.Message;
 
 import javax.ws.rs.NotFoundException;
 import javax.ws.rs.core.Context;
@@ -45,7 +45,7 @@ public class NotFoundExceptionMapper implements ExceptionMapper<NotFoundExceptio
         }
         String msg = String.format("HTTP 404 Not found, the resource (%s) you "
                 + "are trying to access is not found.", path);
-        ErrorMessage errorMessage = new ErrorMessage(404, msg);
+        Message errorMessage = new Message(404, msg);
         return Response.fromResponse(e.getResponse())
                 .entity(errorMessage)
                 .type(MediaType.APPLICATION_JSON)

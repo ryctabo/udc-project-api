@@ -54,7 +54,7 @@ import javax.xml.bind.annotation.XmlType;
 @XmlRootElement
 @Entity(name = "UserEntity")
 @Inheritance(strategy = InheritanceType.JOINED)
-@NamedQueries(value = {
+@NamedQueries({
     @NamedQuery(
             name = "user.findByUsername",
             query = "select u from UserEntity u where u.username = :username"),

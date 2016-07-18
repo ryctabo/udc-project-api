@@ -16,7 +16,6 @@
 
 package co.edu.unicartagena.platf.transfer;
 
-import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
 /**
@@ -25,18 +24,13 @@ import javax.xml.bind.annotation.XmlRootElement;
  * @version 1.0-SNAPSHOT
  */
 @XmlRootElement
-public class UserTransfer {
+public class ResetTransfer {
     
     private String email;
     
-    private String username;
-    
     private String password;
     
-    private String name;
-    
-    @XmlElement(name = "last_name")
-    private String lastName;
+    private String pin;
 
     public String getEmail() {
         return email;
@@ -44,14 +38,6 @@ public class UserTransfer {
 
     public void setEmail(String email) {
         this.email = email;
-    }
-
-    public String getUsername() {
-        return username;
-    }
-
-    public void setUsername(String username) {
-        this.username = username;
     }
 
     public String getPassword() {
@@ -62,20 +48,17 @@ public class UserTransfer {
         this.password = password;
     }
 
-    public String getName() {
-        return name;
+    public String getPin() {
+        return pin;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setPin(String pin) {
+        this.pin = pin;
     }
 
-    public String getLastName() {
-        return lastName;
-    }
-
-    public void setLastName(String lastName) {
-        this.lastName = lastName;
+    @Override
+    public String toString() {
+        return String.format("%s, pin: %s", email, pin);
     }
     
 }

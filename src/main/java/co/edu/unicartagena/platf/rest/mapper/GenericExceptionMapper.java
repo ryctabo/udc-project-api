@@ -15,7 +15,7 @@
  */
 package co.edu.unicartagena.platf.rest.mapper;
 
-import co.edu.unicartagena.platf.model.ErrorMessage;
+import co.edu.unicartagena.platf.model.Message;
 
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
@@ -33,7 +33,7 @@ public class GenericExceptionMapper implements ExceptionMapper<Throwable> {
     @Override
     public Response toResponse(Throwable e) {
         int statusCode = Response.Status.INTERNAL_SERVER_ERROR.getStatusCode();
-        ErrorMessage errorMessage = new ErrorMessage(statusCode, e.getMessage());
+        Message errorMessage = new Message(statusCode, e.getMessage());
         return Response.status(errorMessage.getCode())
                 .type(MediaType.APPLICATION_JSON)
                 .entity(errorMessage)

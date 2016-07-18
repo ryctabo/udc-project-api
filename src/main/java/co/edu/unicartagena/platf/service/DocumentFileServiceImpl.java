@@ -18,7 +18,7 @@ package co.edu.unicartagena.platf.service;
 import co.edu.unicartagena.platf.dao.controller.DocumentFileDao;
 import co.edu.unicartagena.platf.dao.controller.DocumentFileDaoController;
 import co.edu.unicartagena.platf.entity.DocumentFile;
-import co.edu.unicartagena.platf.model.ErrorMessage;
+import co.edu.unicartagena.platf.model.Message;
 
 import java.util.List;
 
@@ -50,7 +50,7 @@ public class DocumentFileServiceImpl implements DocumentFileService {
     public DocumentFile add(DocumentFile document) {
         String msg = validateDocumentFile(document);
         if (msg != null) {
-            ErrorMessage em = new ErrorMessage(400, msg);
+            Message em = new Message(400, msg);
             throw new BadRequestException(Response
                     .status(Response.Status.BAD_REQUEST)
                     .entity(em)
@@ -77,7 +77,7 @@ public class DocumentFileServiceImpl implements DocumentFileService {
         DocumentFile document = controller.find(id);
         if (document == null) {
             String msg = String.format("The document with id %d not found.", id);
-            ErrorMessage em = new ErrorMessage(404, msg);
+            Message em = new Message(404, msg);
             throw new NotFoundException(Response
                     .status(Response.Status.NOT_FOUND)
                     .type(MediaType.APPLICATION_JSON)

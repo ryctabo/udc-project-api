@@ -23,7 +23,7 @@ import co.edu.unicartagena.platf.entity.DocumentFile;
 import co.edu.unicartagena.platf.entity.Faculty;
 import co.edu.unicartagena.platf.entity.Person;
 import co.edu.unicartagena.platf.entity.Program;
-import co.edu.unicartagena.platf.model.ErrorMessage;
+import co.edu.unicartagena.platf.model.Message;
 
 import java.util.List;
 
@@ -80,7 +80,7 @@ public class DocumentServiceImpl implements DocumentService {
     @Override
     public Document update(Integer id, Document document) {
         if (id == null || id <= 0) {
-            ErrorMessage em = new ErrorMessage(
+            Message em = new Message(
                     Response.Status.BAD_REQUEST.getStatusCode(),
                     "The id of document is required.");
             throw new BadRequestException(Response
@@ -106,7 +106,7 @@ public class DocumentServiceImpl implements DocumentService {
     public Document get(Integer id) {
         Document document = controller.find(id);
         if (document == null) {
-            ErrorMessage em = new ErrorMessage(404,
+            Message em = new Message(404,
                     String.format("Document with id %d is not found.", id));
             throw new NotFoundException(Response
                     .status(Response.Status.NOT_FOUND)
@@ -155,7 +155,7 @@ public class DocumentServiceImpl implements DocumentService {
 
         if (message != null) {
             Response.Status status = Response.Status.BAD_REQUEST;
-            ErrorMessage em = new ErrorMessage(status.getStatusCode(), message);
+            Message em = new Message(status.getStatusCode(), message);
             throw new BadRequestException(Response
                     .status(status)
                     .entity(em)

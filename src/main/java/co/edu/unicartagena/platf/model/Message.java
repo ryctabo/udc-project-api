@@ -24,7 +24,7 @@ import javax.xml.bind.annotation.XmlRootElement;
  * @version 1.0
  */
 @XmlRootElement
-public class ErrorMessage {
+public class Message {
     
     private int code;
     
@@ -32,10 +32,10 @@ public class ErrorMessage {
     
     private static final String DOCUMENTATION = "No documentation for now.";
 
-    public ErrorMessage() {
+    public Message() {
     }
 
-    public ErrorMessage(int code, String message) {
+    public Message(int code, String message) {
         this.code = code;
         this.message = message;
     }

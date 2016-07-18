@@ -16,7 +16,7 @@
 
 package co.edu.unicartagena.platf.rest.mapper;
 
-import co.edu.unicartagena.platf.model.ErrorMessage;
+import co.edu.unicartagena.platf.model.Message;
 
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.MediaType;
@@ -35,7 +35,7 @@ public class WebApplicationExceptionMapper
 
     @Override
     public Response toResponse(WebApplicationException e) {
-        ErrorMessage errorMessage = new ErrorMessage(
+        Message errorMessage = new Message(
                 e.getResponse().getStatus(),
                 e.getMessage());
         return Response.fromResponse(e.getResponse())

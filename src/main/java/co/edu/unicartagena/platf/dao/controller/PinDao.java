@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Gustavo Pacheco.
+ * Copyright 2016 Gustavo Pacheco <ryctabo@gmail.com>.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,35 +13,21 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package co.edu.unicartagena.platf.service;
+
+package co.edu.unicartagena.platf.dao.controller;
+
+import co.edu.unicartagena.platf.dao.DataAccessObject;
+import co.edu.unicartagena.platf.dao.exception.NotCreatedEntityManagerException;
+import co.edu.unicartagena.platf.entity.Pin;
 
 /**
  *
  * @author Gustavo Pacheco <ryctabo@gmail.com>
- * @version 1.0
+ * @version 1.0-SNAPSHOT
  */
-public interface AccountService {
-
-    /**
-     * 
-     * @param dataUser
-     * @param password
-     * @return 
-     */
-    String login(String dataUser, String password);
-
-    /**
-     * 
-     * @param email
-     * @param password
-     * @param pin
-     */
-    void reset(String email, String password, String pin);
+public interface PinDao extends DataAccessObject<Pin, Integer> {
     
-    /**
-     * 
-     * @param email
-     */
-    void sendPin(String email);
+    public Pin findByCode(String code)
+            throws NotCreatedEntityManagerException;
 
 }

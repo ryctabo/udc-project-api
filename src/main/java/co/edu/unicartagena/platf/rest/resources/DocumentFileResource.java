@@ -16,7 +16,7 @@
 package co.edu.unicartagena.platf.rest.resources;
 
 import co.edu.unicartagena.platf.entity.DocumentFile;
-import co.edu.unicartagena.platf.model.ErrorMessage;
+import co.edu.unicartagena.platf.model.Message;
 import co.edu.unicartagena.platf.service.DocumentFileService;
 import co.edu.unicartagena.platf.service.DocumentFileServiceImpl;
 import co.edu.unicartagena.platf.service.FileService;
@@ -87,7 +87,7 @@ public class DocumentFileResource {
                     .entity(newDocumentFile)
                     .build();
         } else {
-            ErrorMessage em = new ErrorMessage(500, "the file name is null");
+            Message em = new Message(500, "the file name is null");
             throw new WebApplicationException(Response
                     .status(Response.Status.INTERNAL_SERVER_ERROR)
                     .entity(em)
@@ -104,7 +104,7 @@ public class DocumentFileResource {
             return service.remove(id);
         else {
             String msg = String.format("Could not delete the file with id %d.", id);
-            ErrorMessage em = new ErrorMessage(500, msg);
+            Message em = new Message(500, msg);
             throw new InternalServerErrorException(Response
                     .status(Response.Status.INTERNAL_SERVER_ERROR)
                     .entity(em)

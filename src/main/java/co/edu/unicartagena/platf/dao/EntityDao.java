@@ -19,10 +19,12 @@ import co.edu.unicartagena.platf.dao.exception.NotCreatedEntityManagerException;
 import co.edu.unicartagena.platf.entity.IEntity;
 
 import java.util.List;
+import java.util.logging.Logger;
 
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.EntityTransaction;
+import javax.persistence.NoResultException;
 import javax.persistence.Persistence;
 import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaQuery;
@@ -51,6 +53,9 @@ public class EntityDao<T extends IEntity, I> implements DataAccessObject<T, I> {
      */
     private static final EntityManagerFactory FACTORY = 
             Persistence.createEntityManagerFactory(PERSISTENCE_UNIT);
+    
+    private static final Logger LOG = Logger
+            .getLogger(EntityDao.class.getName());
 
     public EntityDao(Class<T> entityClass) {
         this.entityClass = entityClass;
@@ -159,17 +164,20 @@ public class EntityDao<T extends IEntity, I> implements DataAccessObject<T, I> {
                 TypedQuery<T> typedQuery = entityManager
                         .createNamedQuery(namedQuery, entityClass);
 
-                for (Parameter parameter : parameters) {
+                for (Parameter parameter : parameters)
                     typedQuery.setParameter(parameter.key, parameter.value);
-                }
 
                 return typedQuery.getSingleResult();
+            } catch(NoResultException ex) {
+                LOG.info(ex.getMessage());
+                return null;
             } finally {
                 entityManager.close();
             }
         } else {
             throw new NotCreatedEntityManagerException("The entity manager is "
-                    + "null, entity manager factory does not create entity manager");
+                    + "null, entity manager factory does not create entity "
+                    + "manager");
         }
     }
 
@@ -190,9 +198,8 @@ public class EntityDao<T extends IEntity, I> implements DataAccessObject<T, I> {
                 TypedQuery<T> typedQuery = entityManager
                         .createNamedQuery(namedQuery, entityClass);
 
-                for (Parameter parameter : parameters) {
+                for (Parameter parameter : parameters)
                     typedQuery.setParameter(parameter.key, parameter.value);
-                }
 
                 return typedQuery.getResultList();
             } finally {
@@ -200,7 +207,8 @@ public class EntityDao<T extends IEntity, I> implements DataAccessObject<T, I> {
             }
         } else {
             throw new NotCreatedEntityManagerException("The entity manager is "
-                    + "null, entity manager factory does not create entity manager");
+                    + "null, entity manager factory does not create entity "
+                    + "manager");
         }
     }
     
@@ -223,9 +231,8 @@ public class EntityDao<T extends IEntity, I> implements DataAccessObject<T, I> {
                 TypedQuery<T> typedQuery = entityManager
                         .createNamedQuery(namedQuery, entityClass);
 
-                for (Parameter parameter : parameters) {
+                for (Parameter parameter : parameters)
                     typedQuery.setParameter(parameter.key, parameter.value);
-                }
 
                 return typedQuery.setFirstResult(start)
                         .setMaxResults(size)
@@ -235,7 +242,8 @@ public class EntityDao<T extends IEntity, I> implements DataAccessObject<T, I> {
             }
         } else {
             throw new NotCreatedEntityManagerException("The entity manager is "
-                    + "null, entity manager factory does not create entity manager");
+                    + "null, entity manager factory does not create entity "
+                    + "manager");
         }
     }
 

@@ -20,7 +20,7 @@ import co.edu.unicartagena.platf.dao.controller.PersonDao;
 import co.edu.unicartagena.platf.dao.controller.PersonDaoController;
 import co.edu.unicartagena.platf.dao.exception.NotCreatedEntityManagerException;
 import co.edu.unicartagena.platf.entity.Person;
-import co.edu.unicartagena.platf.model.ErrorMessage;
+import co.edu.unicartagena.platf.model.Message;
 
 import java.util.List;
 import java.util.logging.Level;
@@ -56,7 +56,7 @@ public class PersonServiceImpl implements PersonService {
     public Person add(Person person) {
         String message = validatePerson(person);
         if (message != null) {
-            ErrorMessage em = new ErrorMessage(400, message);
+            Message em = new Message(400, message);
             Response response = Response.status(Response.Status.BAD_REQUEST)
                     .entity(em)
                     .build();
@@ -69,7 +69,7 @@ public class PersonServiceImpl implements PersonService {
     @Override
     public Person update(Integer id, Person person) {
         if (id == null || id == 0) {
-            ErrorMessage em = new ErrorMessage(400, "The person id is required.");
+            Message em = new Message(400, "The person id is required.");
             Response response = Response.status(Response.Status.BAD_REQUEST)
                     .entity(em)
                     .build();
@@ -80,7 +80,7 @@ public class PersonServiceImpl implements PersonService {
         
         String errorMessage = validatePerson(person);
         if (errorMessage != null) {
-            ErrorMessage em = new ErrorMessage(400, errorMessage);
+            Message em = new Message(400, errorMessage);
             throw new BadRequestException(Response
                     .status(Response.Status.BAD_REQUEST)
                     .entity(em)
@@ -104,7 +104,7 @@ public class PersonServiceImpl implements PersonService {
         Person person = controller.find(id);
         if (person == null) {
             String msg = String.format("The person with id %d not found", id);
-            ErrorMessage em = new ErrorMessage(404, msg);
+            Message em = new Message(404, msg);
             throw new NotFoundException(Response
                     .status(Response.Status.NOT_FOUND)
                     .entity(em)
@@ -136,7 +136,7 @@ public class PersonServiceImpl implements PersonService {
     @Override
     public List<Person> findPersonByFullName(String search) {
         if (search == null) {
-            ErrorMessage em = new ErrorMessage(400, "The param like is required for search.");
+            Message em = new Message(400, "The param like is required for search.");
             throw new BadRequestException(Response
                     .status(Response.Status.BAD_REQUEST)
                     .entity(em)

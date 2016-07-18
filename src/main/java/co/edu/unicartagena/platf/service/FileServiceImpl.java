@@ -16,7 +16,7 @@
 
 package co.edu.unicartagena.platf.service;
 
-import co.edu.unicartagena.platf.model.ErrorMessage;
+import co.edu.unicartagena.platf.model.Message;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -55,7 +55,7 @@ public class FileServiceImpl implements FileService {
         String fileName = fileMetaData.getFileName();
         
         if (fileName == null || !fileName.contains(".")) {
-            ErrorMessage em = new ErrorMessage(500, "The file name is incorrect.");
+            Message em = new Message(500, "The file name is incorrect.");
             throw new WebApplicationException(Response
                     .status(Response.Status.INTERNAL_SERVER_ERROR)
                     .entity(em)
@@ -84,7 +84,7 @@ public class FileServiceImpl implements FileService {
 
             saveFile(URL_FOLDER, PATHNAME, fileInputStream);
         } else {
-            ErrorMessage em = new ErrorMessage(500,
+            Message em = new Message(500,
                     "The format of file is invalid.");
             throw new WebApplicationException(Response
                     .status(Response.Status.INTERNAL_SERVER_ERROR)

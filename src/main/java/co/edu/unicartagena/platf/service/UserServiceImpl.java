@@ -15,13 +15,18 @@
  */
 package co.edu.unicartagena.platf.service;
 
+import co.edu.unicartagena.platf.dao.controller.PinDao;
+import co.edu.unicartagena.platf.dao.controller.PinDaoController;
 import co.edu.unicartagena.platf.dao.controller.UserDao;
 import co.edu.unicartagena.platf.dao.controller.UserDaoController;
 import co.edu.unicartagena.platf.dao.exception.NotCreatedEntityManagerException;
+import co.edu.unicartagena.platf.entity.Pin;
 import co.edu.unicartagena.platf.entity.RoleType;
 import co.edu.unicartagena.platf.entity.User;
 import co.edu.unicartagena.platf.entity.UserDetail;
-import co.edu.unicartagena.platf.model.ErrorMessage;
+import co.edu.unicartagena.platf.exception.TokenNotGeneratedException;
+import co.edu.unicartagena.platf.model.Message;
+import co.edu.unicartagena.platf.rest.TokenUtil;
 import co.edu.unicartagena.platf.transfer.UserTransfer;
 
 import java.util.List;
@@ -34,6 +39,8 @@ import javax.ws.rs.NotFoundException;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Response;
 
+import org.jose4j.lang.JoseException;
+
 /**
  *
  * @author Gustavo Pacheco <ryctabo@gmail.com>
@@ -41,7 +48,9 @@ import javax.ws.rs.core.Response;
  */
 public class UserServiceImpl implements UserService {
 
-    UserDao controller = new UserDaoController();
+    UserDao userController = new UserDaoController();
+    
+    PinDao pinController = new PinDaoController();
 
     private static final String VALID_EMAIL_REGEX = "[_a-z0-9-]"
             + "+(\\.[_a-z0-9-]+)*@[a-z0-9-]+(\\.[a-z0-9-]+)*(\\.[a-z]{2,3})";
@@ -50,35 +59,34 @@ public class UserServiceImpl implements UserService {
             .getLogger(UserServiceImpl.class.getName());
 
     private UserServiceImpl() {
-        if (controller.findAll().isEmpty()) {
+        if (userController.findAll().isEmpty()) {
             User admin = new UserDetail("Administrator", null, "admin",
                     "admin@unicartagena.edu.co", "admin");
             admin.addRoles(RoleType.values());
-            controller.save(admin);
+            userController.save(admin);
         }
     }
 
     private static UserServiceImpl instance;
 
     public static UserServiceImpl getInstance() {
-        if (instance == null) {
+        if (instance == null)
             instance = new UserServiceImpl();
-        }
         return instance;
     }
 
     @Override
     public User add(User user) {
-        if (user == null) {
+        if (user == null)
             throw new BadRequestException("The user entity is required.");
-        } else if (user.getRoles().isEmpty()) {
+        else if (user.getRoles().isEmpty())
             throw new BadRequestException("The user roles is required.");
-        } else if (user.getEmail() == null || !isEmail(user.getEmail())) {
+        else if (user.getEmail() == null || !isEmail(user.getEmail()))
             throw new BadRequestException("The user email is required.");
-        } else if (user.getPassword() == null) {
+        else if (user.getPassword() == null)
             throw new BadRequestException("The user password is required");
-        }
-        return controller.save(user);
+        
+        return userController.save(user);
     }
 
     /**
@@ -99,12 +107,11 @@ public class UserServiceImpl implements UserService {
             get(id);
         }
 
-        if (user == null) {
+        if (user == null)
             throw new BadRequestException("The user information is required.");
-        }
 
         user.setId(id);
-        return controller.save(user);
+        return userController.save(user);
     }
 
     /**
@@ -121,14 +128,14 @@ public class UserServiceImpl implements UserService {
     public UserDetail update(Integer id, UserTransfer userTransfer) {
         UserDetail user = null;
 
-        if (userTransfer == null) {
+        if (userTransfer == null) 
             throw new BadRequestException("The user information is required.");
-        }
-        if (id == null || id <= 0) {
+        
+        if (id == null || id <= 0) 
             throw new BadRequestException("The user id is required.");
-        } else {
+        else
             user = (UserDetail) get(id);
-        }
+        
 
         if (userTransfer.getEmail() != null) {
             if (isEmail(userTransfer.getEmail())) {
@@ -138,34 +145,34 @@ public class UserServiceImpl implements UserService {
             }
         }
 
-        if (userTransfer.getLastName() != null) {
+        if (userTransfer.getLastName() != null)
             user.setLastName(userTransfer.getLastName());
-        }
 
-        if (userTransfer.getName() != null) {
+        if (userTransfer.getName() != null)
             user.setName(userTransfer.getName());
-        }
-
-        if (userTransfer.getUsername() != null) {
+        
+        if (userTransfer.getUsername() != null)
             user.setEmail(userTransfer.getUsername());
-        }
+        
+        if (userTransfer.getPassword() != null)
+            user.setPassword(userTransfer.getPassword());
 
-        return (UserDetail) controller.save(user);
+        return (UserDetail) userController.save(user);
     }
 
     @Override
     public User remove(Integer id) {
         User findUser = get(id);
-        controller.delete(id);
+        userController.delete(id);
         return findUser;
     }
 
     @Override
     public User get(Integer id) {
-        User findUser = controller.find(id);
+        User findUser = userController.find(id);
         if (findUser == null) {
             String msg = String.format("The user with id %d not found.", id);
-            ErrorMessage errorMessage = new ErrorMessage(404, msg);
+            Message errorMessage = new Message(404, msg);
             Response response = Response.status(Response.Status.NOT_FOUND)
                     .entity(errorMessage)
                     .build();
@@ -176,38 +183,27 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public List<User> getAll() {
-        return controller.findAll();
+        return userController.findAll();
     }
     
     @Override
     public List<User> getAll(int start, int size) {
-        return controller.findAllPaginated(start, size);
-    }
-
-    @Override
-    public boolean login(String username, String password) {
-        try {
-            return controller.login(username, password);
-        } catch (NotCreatedEntityManagerException ex) {
-            throw new WebApplicationException("Error generating entity manager "
-                    + "for connecting database.\n" + ex.getMessage(), ex);
-        }
+        return userController.findAllPaginated(start, size);
     }
 
     @Override
     public User findByUsername(String username) {
         try {
-            if (username == null) {
+            if (username == null)
                 throw new BadRequestException("The username is required");
-            }
-
-            User user = controller.findUserByUsername(username);
+            
+            User user = userController.findUserByUsername(username);
 
             if (user == null) {
                 String msg = String.format(
                         "User with username %s is not found.",
                         username);
-                ErrorMessage em = new ErrorMessage(
+                Message em = new Message(
                         Response.Status.NOT_FOUND.getStatusCode(),
                         msg);
                 Response response = Response.status(em.getCode())
@@ -231,21 +227,19 @@ public class UserServiceImpl implements UserService {
     @Override
     public User findByEmail(String email) {
         try {
-            if (email == null) {
+            if (email == null)
                 throw new BadRequestException("The email is required");
-            }
 
-            if (!isEmail(email)) {
+            if (!isEmail(email))
                 throw new BadRequestException("Email is incorrect");
-            }
 
-            User user = controller.findUserByEmail(email);
+            User user = userController.findUserByEmail(email);
 
             if (user == null) {
                 String msg = String.format(
                         "User with email %s is not found.",
                         email);
-                ErrorMessage em = new ErrorMessage(
+                Message em = new Message(
                         Response.Status.NOT_FOUND.getStatusCode(),
                         msg);
                 Response response = Response.status(em.getCode())
@@ -271,7 +265,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public List<User> findByRole(RoleType role) {
         try {
-            return controller.findAllByRole(role);
+            return userController.findAllByRole(role);
         } catch (NotCreatedEntityManagerException ex) {
             LOG.log(Level.SEVERE, null, ex);
             throw new WebApplicationException("Error generating entity manager "
@@ -282,7 +276,98 @@ public class UserServiceImpl implements UserService {
     @Override
     public List<User> findByRole(RoleType role, int start, int size) {
         try {
-            return controller.findAllByRole(role, start, size);
+            return userController.findAllByRole(role, start, size);
+        } catch (NotCreatedEntityManagerException ex) {
+            LOG.log(Level.SEVERE, null, ex);
+            throw new WebApplicationException("Error generating entity manager "
+                    + "for connecting database.\n" + ex.getMessage(), ex);
+        }
+    }
+
+    @Override
+    public String login(String dataUser, String password) {
+        try {
+            if (dataUser == null || password == null)
+                throw new BadRequestException("Username and password is "
+                        + "required.");
+            
+            if (userController.login(dataUser, password)) {
+                User user = findByUsernameOrEmail(dataUser);
+                String token;
+                try {
+                    TokenUtil.UserInfo userInfo = new TokenUtil.UserInfo();
+                    userInfo.setId(user.getId());
+                    userInfo.setUsername(user.getUsername());
+                    userInfo.setEmail(user.getEmail());
+                    userInfo.setName(user instanceof UserDetail ?
+                            ((UserDetail) user).toString() : null);
+                    
+                    token = TokenUtil.generateToken(userInfo);
+                } catch (JoseException | TokenNotGeneratedException ex) {
+                    LOG.log(Level.SEVERE, null, ex);
+                    throw new WebApplicationException("Erorr generating token, "
+                            + ex.getMessage(), ex);
+                }
+                return token;
+            } else {
+                throw new WebApplicationException("Username or password is not "
+                        + "valid.", Response.Status.UNAUTHORIZED);
+            }
+        } catch (NotCreatedEntityManagerException ex) {
+            throw new WebApplicationException("Error generating entity manager "
+                    + "for connecting database.\n" + ex.getMessage(), ex);
+        }
+    }
+    
+    @Override
+    public void reset(String email, String newPassword, String pinCode) {
+        try {
+            if (email == null || newPassword == null || pinCode == null
+                    || email.isEmpty() || !isEmail(email)
+                    || newPassword.isEmpty() || pinCode.isEmpty())
+                throw new BadRequestException("The user information is "
+                        + "required.");
+            
+            Pin pin = pinController.findByCode(pinCode);
+            
+            if (pin == null)
+                throw new BadRequestException("The pin is incorrect");
+            
+            if (pin.getEmail().equalsIgnoreCase(email)) {
+                User user = userController.findUserByEmail(email);
+                user.setPassword(newPassword);
+                userController.save(user);
+                pinController.delete(pin.getId());
+            } else {
+                String msg = String.format("This %s email does not match the "
+                        + "given pin", email);
+                throw new BadRequestException(msg);
+            }
+        } catch (NotCreatedEntityManagerException ex) {
+            LOG.log(Level.SEVERE, null, ex);
+            throw new WebApplicationException("Error generating entity manager "
+                    + "for connecting database.\n" + ex.getMessage(), ex);
+        }
+    }
+
+    @Override
+    public void sendPin(String email) {
+        try {
+            if (email == null || email.isEmpty() || !isEmail(email))
+                throw new BadRequestException("The email is required");
+            
+            if (userController.findUserByEmail(email) == null) {
+                String msg = String.format("This %s email is not registered.",
+                        email);
+                throw new BadRequestException(msg);
+            }
+            
+            Pin pin = new Pin(email);
+            while (pinController.findByCode(pin.getCode()) != null)
+                pin.setCode(Pin.generatePinCode());
+            
+            pinController.save(pin);
+            //here send message to email
         } catch (NotCreatedEntityManagerException ex) {
             LOG.log(Level.SEVERE, null, ex);
             throw new WebApplicationException("Error generating entity manager "
