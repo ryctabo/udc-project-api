@@ -37,8 +37,10 @@ public class RoleTypeConverter implements ParamConverterProvider {
         if (rawType.getName().equals(RoleType.class.getName())) {
             return new ParamConverter<T>() {
                 @Override
-                public T fromString(String string) {
-                    switch (string) {
+                public T fromString(String roleString) {
+                    if (roleString == null) return null;
+                    
+                    switch (roleString) {
                         case "ADMINISTRADOR":
                             return rawType.cast(RoleType.ADMINISTRATOR);
                         case "DECANATURA":
@@ -53,8 +55,8 @@ public class RoleTypeConverter implements ParamConverterProvider {
                 }
 
                 @Override
-                public String toString(T t) {
-                    return t == null ? null : t.toString();
+                public String toString(T roleObject) {
+                    return roleObject == null ? null : roleObject.toString();
                 }
             };
         }
