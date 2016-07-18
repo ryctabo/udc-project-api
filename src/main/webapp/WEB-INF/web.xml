@@ -12,7 +12,8 @@
             <param-value>
                 co.edu.unicartagena.platf.rest.resources,
                 co.edu.unicartagena.platf.rest.mapper,
-                co.edu.unicartagena.platf.rest.converters
+                co.edu.unicartagena.platf.rest.converters,
+                co.edu.unicartagena.platf.rest.filters
             </param-value>
         </init-param>
         <init-param>
