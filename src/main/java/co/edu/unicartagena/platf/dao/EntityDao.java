@@ -76,7 +76,9 @@ public class EntityDao<T extends IEntity, I> implements DataAccessObject<T, I> {
     public List<T> findAll() {
         EntityManager entityManager = getEntityManager();
         try {
-            CriteriaQuery criteriaQuery = entityManager.getCriteriaBuilder().createQuery();
+            CriteriaQuery criteriaQuery = entityManager
+                    .getCriteriaBuilder()
+                    .createQuery();
             criteriaQuery.select(criteriaQuery.from(this.entityClass));
 
             TypedQuery<T> typedQuery = entityManager.createQuery(criteriaQuery);
@@ -151,8 +153,24 @@ public class EntityDao<T extends IEntity, I> implements DataAccessObject<T, I> {
      */
     protected T executeNamedQuery(String namedQuery, List<Parameter> parameters)
             throws NotCreatedEntityManagerException {
-        List<T> entities = executeNamedQueryForList(namedQuery, parameters);
-        return entities.isEmpty() ? null : entities.iterator().next();
+        EntityManager entityManager = getEntityManager();
+        if (entityManager != null) {
+            try {
+                TypedQuery<T> typedQuery = entityManager
+                        .createNamedQuery(namedQuery, entityClass);
+
+                for (Parameter parameter : parameters) {
+                    typedQuery.setParameter(parameter.key, parameter.value);
+                }
+
+                return typedQuery.getSingleResult();
+            } finally {
+                entityManager.close();
+            }
+        } else {
+            throw new NotCreatedEntityManagerException("The entity manager is "
+                    + "null, entity manager factory does not create entity manager");
+        }
     }
 
     /**
@@ -163,7 +181,8 @@ public class EntityDao<T extends IEntity, I> implements DataAccessObject<T, I> {
      * @return entity class
      * @throws NotCreatedEntityManagerException if entity user is null
      */
-    protected List<T> executeNamedQueryForList(String namedQuery, List<Parameter> parameters)
+    protected List<T> executeNamedQueryForList(String namedQuery,
+            List<Parameter> parameters)
             throws NotCreatedEntityManagerException {
         EntityManager entityManager = getEntityManager();
         if (entityManager != null) {
@@ -176,6 +195,41 @@ public class EntityDao<T extends IEntity, I> implements DataAccessObject<T, I> {
                 }
 
                 return typedQuery.getResultList();
+            } finally {
+                entityManager.close();
+            }
+        } else {
+            throw new NotCreatedEntityManagerException("The entity manager is "
+                    + "null, entity manager factory does not create entity manager");
+        }
+    }
+    
+    /**
+     * Get all entities from named query with given params.
+     *
+     * @param namedQuery named query
+     * @param parameters params for insert into the named query
+     * @param start first index of result list
+     * @param size max result of list
+     * @return entity class
+     * @throws NotCreatedEntityManagerException if entity user is null
+     */
+    protected List<T> executeNamedQueryForList(String namedQuery,
+            List<Parameter> parameters, int start, int size)
+            throws NotCreatedEntityManagerException {
+        EntityManager entityManager = getEntityManager();
+        if (entityManager != null) {
+            try {
+                TypedQuery<T> typedQuery = entityManager
+                        .createNamedQuery(namedQuery, entityClass);
+
+                for (Parameter parameter : parameters) {
+                    typedQuery.setParameter(parameter.key, parameter.value);
+                }
+
+                return typedQuery.setFirstResult(start)
+                        .setMaxResults(size)
+                        .getResultList();
             } finally {
                 entityManager.close();
             }

@@ -11,7 +11,8 @@
             <param-name>jersey.config.server.provider.packages</param-name>
             <param-value>
                 co.edu.unicartagena.platf.rest.resources,
-                co.edu.unicartagena.platf.rest.mapper
+                co.edu.unicartagena.platf.rest.mapper,
+                co.edu.unicartagena.platf.rest.converters
             </param-value>
         </init-param>
         <init-param>

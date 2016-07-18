@@ -15,15 +15,20 @@
  */
 package co.edu.unicartagena.platf.rest.resources;
 
+import co.edu.unicartagena.platf.entity.RoleType;
 import co.edu.unicartagena.platf.entity.UserDetail;
 import co.edu.unicartagena.platf.entity.User;
+import co.edu.unicartagena.platf.rest.bean.UserFilterBean;
 import co.edu.unicartagena.platf.service.UserService;
 import co.edu.unicartagena.platf.service.UserServiceImpl;
+import co.edu.unicartagena.platf.transfer.UserTransfer;
 
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Logger;
 
+import javax.ws.rs.BeanParam;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
@@ -49,15 +54,29 @@ public class UserResource {
     
     UserService service = UserServiceImpl.getInstance();
     
+    private static final Logger LOG = Logger
+            .getLogger(UserResource.class.getName());
+    
     @GET
-    public List<UserDetail> getAllUsers() {
-        final List<UserDetail> people = new ArrayList<>();
-        for (User user : service.getAll()) {
+    public List<UserDetail> getAllUsers(@BeanParam UserFilterBean bean) {
+        final List<UserDetail> users = new ArrayList<>();
+        List<User> temp;
+        if (bean.getRole() != null) {
+            temp = bean.getSize() > 0 ? service.findByRole(RoleType.PROGRAM,
+                    bean.getStart(),
+                    bean.getSize()) : service.findByRole(RoleType.PROGRAM);
+        } else {
+            temp = bean.getSize() > 0 ? service.getAll(bean.getStart(),
+                    bean.getSize()) : service.getAll();
+        }
+        
+        for (User user : temp) {
             if (user instanceof UserDetail) {
-                people.add((UserDetail) user);
+                user.setPassword(null);
+                users.add((UserDetail) user);
             }
         }
-        return people;
+        return users;
     }
     
     @POST
@@ -72,8 +91,9 @@ public class UserResource {
     
     @PUT
     @Path("{userId}")
-    public UserDetail updateUser(@PathParam("userId") Integer userId, UserDetail person) {
-        return (UserDetail) service.update(userId, person);
+    public UserDetail updateUser(@PathParam("userId") Integer userId,
+            UserTransfer user) {
+        return ((UserServiceImpl) service).update(userId, user);
     }
     
     @DELETE
@@ -83,19 +103,27 @@ public class UserResource {
     }
     
     @GET
-    @Path("{username}")
+    @Path("{userId}")
+    public Response getUser(@PathParam("userId") Integer userId) {
+        User user = service.get(userId);
+        user.setPassword(null);
+        if (user instanceof UserDetail) {
+            UserDetail userDetail = (UserDetail) user;
+            return Response.ok(userDetail).build();
+        }
+        return Response.ok(user).build();
+    }
+    
+    @GET
+    @Path("username/{username}")
     public Response getUserByUsername(@PathParam("username") String username) {
-        User user = service.findByUsernameOrEmail(username);
+        User user = service.findByUsername(username);
+        user.setPassword(null);
         if (user instanceof UserDetail) {
             UserDetail person = (UserDetail) user;
             return Response.ok(person).build();
         }
         return Response.ok(user).build();
-    }
-    
-    @Path("login")
-    public AuthenticateResource getAuthenticate() {
-        return new AuthenticateResource();
     }
     
 }

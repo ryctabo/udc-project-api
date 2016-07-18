@@ -17,10 +17,15 @@ package co.edu.unicartagena.platf.dao.controller;
 
 import co.edu.unicartagena.platf.dao.EntityDao;
 import co.edu.unicartagena.platf.dao.exception.NotCreatedEntityManagerException;
+import co.edu.unicartagena.platf.entity.RoleType;
 import co.edu.unicartagena.platf.entity.User;
 
 import java.util.Arrays;
 import java.util.List;
+
+import javax.persistence.EntityManager;
+import javax.persistence.TypedQuery;
+import javax.persistence.criteria.CriteriaQuery;
 
 /**
  *
@@ -39,24 +44,19 @@ public class UserDaoController extends EntityDao<User, Integer> implements UserD
     @Override
     public User findUserByUsername(String username)
             throws NotCreatedEntityManagerException {
-        List<Parameter> parameters = Arrays.asList(new Parameter("username", username));
+        List<Parameter> parameters = Arrays
+                .asList(new Parameter("username", username));
         return executeNamedQuery("user.findByUsername", parameters);
     }
 
     @Override
     public User findUserByEmail(String email)
             throws NotCreatedEntityManagerException {
-        List<Parameter> parameters = Arrays.asList(new Parameter("email", email));
+        List<Parameter> parameters = Arrays
+                .asList(new Parameter("email", email));
         return executeNamedQuery("user.findByEmail", parameters);
     }
 
-    @Override
-    public User findUserByUsernameOrEmail(String argument)
-            throws NotCreatedEntityManagerException {
-        List<Parameter> params = Arrays.asList(new Parameter("signIn", argument));
-        return executeNamedQuery("user.findByUsernameOrEmail", params);
-    }
-    
     @Override
     public boolean login(String usernameOrEmail, String password)
             throws NotCreatedEntityManagerException {
@@ -68,4 +68,40 @@ public class UserDaoController extends EntityDao<User, Integer> implements UserD
         return user != null;
     }
 
+    @Override
+    public List<User> findAllPaginated(int start, int size) {
+        EntityManager entityManager = getEntityManager();
+        try {
+            CriteriaQuery criteriaQuery = entityManager
+                    .getCriteriaBuilder()
+                    .createQuery();
+            
+            criteriaQuery.select(criteriaQuery.from(User.class));
+            
+            TypedQuery<User> typedQuery = entityManager
+                    .createQuery(criteriaQuery);
+            
+            return typedQuery.setFirstResult(start)
+                    .setMaxResults(size)
+                    .getResultList();
+        } finally {
+            if (entityManager != null)
+                entityManager.close();
+        }
+    }
+
+    @Override
+    public List<User> findAllByRole(RoleType role)
+            throws NotCreatedEntityManagerException {
+        List<Parameter> params = Arrays.asList(new Parameter("role", role));
+        return executeNamedQueryForList("user.findByRole", params);
+    }
+
+    @Override
+    public List<User> findAllByRole(RoleType role, int start, int size)
+            throws NotCreatedEntityManagerException {
+        List<Parameter> params = Arrays.asList(new Parameter("role", role));
+        return executeNamedQueryForList("user.findByRole", params, start, size);
+    }
+    
 }

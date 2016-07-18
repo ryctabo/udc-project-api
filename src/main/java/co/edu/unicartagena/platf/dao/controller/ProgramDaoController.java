@@ -33,7 +33,7 @@ import javax.persistence.criteria.CriteriaQuery;
  */
 public class ProgramDaoController extends EntityDao<Program, Integer>
         implements ProgramDao {
-    
+
     public ProgramDaoController() {
         super(Program.class);
     }

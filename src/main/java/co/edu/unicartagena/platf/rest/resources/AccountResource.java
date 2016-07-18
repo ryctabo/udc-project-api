@@ -32,6 +32,7 @@ import java.util.logging.Logger;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
+import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.MediaType;
@@ -44,11 +45,14 @@ import org.jose4j.lang.JoseException;
  * @author Gustavo Pacheco <ryctabo@gmail.com>
  * @version 1.0-SNAPSHOT
  */
-public class AuthenticateResource {
+@Path("accounts")
+@Consumes(MediaType.APPLICATION_JSON)
+@Produces(MediaType.APPLICATION_JSON)
+public class AccountResource {
 
     UserService service = UserServiceImpl.getInstance();
 
-    private static final Logger LOG = Logger.getLogger(AuthenticateResource.class.getName());
+    private static final Logger LOG = Logger.getLogger(AccountResource.class.getName());
 
     @GET
     @Produces(MediaType.TEXT_PLAIN)
@@ -57,8 +61,7 @@ public class AuthenticateResource {
     }
 
     @POST
-    @Consumes(MediaType.APPLICATION_JSON)
-    @Produces(MediaType.APPLICATION_JSON)
+    @Path("login")
     public Response authenticate(LoginTransfer loginTransfer) {
         if (loginTransfer == null) {
             ErrorMessage em = new ErrorMessage(
@@ -113,6 +116,13 @@ public class AuthenticateResource {
                     .entity(em)
                     .build();
         }
+    }
+
+    @POST
+    @Path("reset")
+    @Produces(MediaType.TEXT_PLAIN)
+    public String resetPassword() {
+        return "This is reset password!";
     }
 
 }

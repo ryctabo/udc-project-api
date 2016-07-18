@@ -58,6 +58,12 @@ public class UserDetail extends User {
         this.lastName = lastName;
     }
 
+    public UserDetail(String name, String lastName, String username, String email, String password) {
+        super(username, email, password);
+        this.name = name;
+        this.lastName = lastName;
+    }
+
     public String getName() {
         return name;
     }

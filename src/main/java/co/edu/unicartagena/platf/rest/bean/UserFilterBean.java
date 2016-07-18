@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Gustavo Pacheco.
+ * Copyright 2016 Gustavo Pacheco <ryctabo@gmail.com>.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,29 +13,50 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package co.edu.unicartagena.platf.service;
+
+package co.edu.unicartagena.platf.rest.bean;
 
 import co.edu.unicartagena.platf.entity.RoleType;
-import co.edu.unicartagena.platf.entity.User;
-import java.util.List;
+import javax.ws.rs.QueryParam;
 
 /**
  *
  * @author Gustavo Pacheco <ryctabo@gmail.com>
  * @version 1.0-SNAPSHOT
  */
-public interface UserService extends Service<User, Integer>, AccountService {
+public class UserFilterBean {
     
-    User findByUsername(String username);
+    @QueryParam("start")
+    private int start;
     
-    User findByEmail(String email);
+    @QueryParam("size")
+    private int size;
     
-    User findByUsernameOrEmail(String usernameOrEmail);
-    
-    List<User> findByRole(RoleType role);
-    
-    List<User> findByRole(RoleType role, int start, int size);
-    
-    List<User> getAll(int start, int size);
+    @QueryParam("role")
+    private RoleType role;
+
+    public int getStart() {
+        return start;
+    }
+
+    public void setStart(int start) {
+        this.start = start;
+    }
+
+    public int getSize() {
+        return size;
+    }
+
+    public void setSize(int size) {
+        this.size = size;
+    }
+
+    public RoleType getRole() {
+        return role;
+    }
+
+    public void setRole(RoleType role) {
+        this.role = role;
+    }
     
 }

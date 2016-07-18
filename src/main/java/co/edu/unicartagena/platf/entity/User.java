@@ -15,11 +15,16 @@
  */
 package co.edu.unicartagena.platf.entity;
 
+import co.edu.unicartagena.platf.dao.converters.PasswordConverter;
+
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Calendar;
+import java.util.GregorianCalendar;
 import java.util.List;
 
 import javax.persistence.Column;
+import javax.persistence.Convert;
 import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
@@ -34,10 +39,11 @@ import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
 
 /**
@@ -56,48 +62,53 @@ import javax.xml.bind.annotation.XmlType;
             name = "user.findByEmail",
             query = "select u from UserEntity u where u.email = :email"),
     @NamedQuery(
-            name = "user.findByUsernameOrEmail",
-            query = "select u from UserEntity u where u.username = :signIn or "
-                    + "u.email = :signIn"),
-    @NamedQuery(
             name = "user.login",
             query = "select u from UserEntity u where (u.username = :login or "
-                    + "u.email = :login) and u.password = :password and "
-                    + "u.enabled = true and u.deleted = false")
+            + "u.email = :login) and u.password = :password and "
+            + "u.enabled = true and u.deleted = false"),
+    @NamedQuery(
+            name = "user.findByRole",
+            query = "select u from UserEntity u join u.roles r where r = :role")
 })
 @XmlType(propOrder = {
-    "id", "username", "email", "password", "roles", "enabled", "deleted"
+    "id", "username", "email", "password", "roles", "enabled", "deleted",
+    "created"
 })
 public class User implements IEntity {
-    
+
     @Id
     @XmlElement(name = "user_id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
-    
+
     @Column(length = 12, unique = true)
     private String username;
-    
+
     @Column(length = 50, unique = true, nullable = false)
     private String email;
-    
-    @XmlTransient
-    @Column(length = 20, nullable = false)
+
+    @Column(nullable = false)
+    @Convert(converter = PasswordConverter.class)
     private String password;
-    
-    @ElementCollection(fetch = FetchType.EAGER, targetClass = RoleType.class)
-    @JoinTable(name = "role", joinColumns = @JoinColumn(name = "user_id"))
+
+    @Enumerated(EnumType.STRING)
     @Column(name = "role_id", nullable = false)
-    @Enumerated(EnumType.ORDINAL)
+    @JoinTable(name = "role", joinColumns = @JoinColumn(name = "user_id"))
+    @ElementCollection(fetch = FetchType.EAGER, targetClass = RoleType.class)
     private List<RoleType> roles;
-    
+
     private boolean enabled;
-    
+
     private boolean deleted;
+    
+    @Temporal(TemporalType.TIMESTAMP)
+    @Column(nullable = false, updatable = false)
+    private Calendar created;
 
     public User() {
         this.roles = new ArrayList<>();
         this.enabled = true;
+        this.created = GregorianCalendar.getInstance();
     }
 
     public User(String email, String password) {
@@ -105,6 +116,7 @@ public class User implements IEntity {
         this.password = password;
         this.roles = new ArrayList<>();
         this.enabled = true;
+        this.created = GregorianCalendar.getInstance();
     }
 
     public User(String username, String email, String password) {
@@ -113,6 +125,7 @@ public class User implements IEntity {
         this.password = password;
         this.roles = new ArrayList<>();
         this.enabled = true;
+        this.created = GregorianCalendar.getInstance();
     }
 
     public int getId() {
@@ -150,7 +163,7 @@ public class User implements IEntity {
     public void addRoles(RoleType... roles) {
         this.roles.addAll(Arrays.asList(roles));
     }
-    
+
     public List<RoleType> getRoles() {
         return roles;
     }
@@ -173,6 +186,14 @@ public class User implements IEntity {
 
     public void setDeleted(boolean deleted) {
         this.deleted = deleted;
+    }
+
+    public Calendar getCreated() {
+        return created;
+    }
+
+    public void setCreated(Calendar created) {
+        this.created = created;
     }
 
 }

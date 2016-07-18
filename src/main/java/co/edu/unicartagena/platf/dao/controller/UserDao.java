@@ -17,7 +17,9 @@ package co.edu.unicartagena.platf.dao.controller;
 
 import co.edu.unicartagena.platf.dao.DataAccessObject;
 import co.edu.unicartagena.platf.dao.exception.NotCreatedEntityManagerException;
+import co.edu.unicartagena.platf.entity.RoleType;
 import co.edu.unicartagena.platf.entity.User;
+import java.util.List;
 
 /**
  *
@@ -28,11 +30,40 @@ public interface UserDao extends DataAccessObject<User, Integer> {
     
     /**
      * 
+     * @param start
+     * @param size
+     * @return 
+     */
+    List<User> findAllPaginated(int start, int size);
+    
+    /**
+     * 
+     * @param role
+     * @return 
+     * @throws NotCreatedEntityManagerException 
+     */
+    List<User> findAllByRole(RoleType role)
+            throws NotCreatedEntityManagerException;
+    
+    /**
+     * 
+     * @param role
+     * @param start
+     * @param size
+     * @return
+     * @throws NotCreatedEntityManagerException 
+     */
+    List<User> findAllByRole(RoleType role, int start, int size)
+            throws NotCreatedEntityManagerException;
+    
+    /**
+     * 
      * @param username
      * @return
      * @throws NotCreatedEntityManagerException 
      */
-    User findUserByUsername(String username) throws NotCreatedEntityManagerException;
+    User findUserByUsername(String username)
+            throws NotCreatedEntityManagerException;
     
     /**
      * 
@@ -40,15 +71,8 @@ public interface UserDao extends DataAccessObject<User, Integer> {
      * @return 
      * @throws NotCreatedEntityManagerException 
      */
-    User findUserByEmail(String email) throws NotCreatedEntityManagerException;
-    
-    /**
-     * 
-     * @param argument
-     * @return 
-     * @throws NotCreatedEntityManagerException 
-     */
-    User findUserByUsernameOrEmail(String argument) throws NotCreatedEntityManagerException;
+    User findUserByEmail(String email)
+            throws NotCreatedEntityManagerException;
     
     /**
      * 
@@ -57,6 +81,7 @@ public interface UserDao extends DataAccessObject<User, Integer> {
      * @return
      * @throws NotCreatedEntityManagerException 
      */
-    boolean login(String usernameOrEmail, String password) throws NotCreatedEntityManagerException;
+    boolean login(String usernameOrEmail, String password)
+            throws NotCreatedEntityManagerException;
     
 }

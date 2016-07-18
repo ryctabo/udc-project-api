@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Gustavo Pacheco.
+ * Copyright 2016 Gustavo Pacheco <ryctabo@gmail.com>.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,28 +13,27 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package co.edu.unicartagena.platf.entity;
 
-import javax.xml.bind.annotation.XmlEnum;
-import javax.xml.bind.annotation.XmlEnumValue;
+package co.edu.unicartagena.platf.dao.converters;
+
+import javax.persistence.AttributeConverter;
+import org.apache.commons.codec.digest.DigestUtils;
 
 /**
  *
  * @author Gustavo Pacheco <ryctabo@gmail.com>
- * @version 1.0
+ * @version 1.0-SNAPSHOT
  */
-@XmlEnum
-public enum RoleType {
+public class PasswordConverter implements AttributeConverter<String, String> {
+
+    @Override
+    public String convertToDatabaseColumn(String password) {
+        return DigestUtils.sha1Hex(password);
+    }
+
+    @Override
+    public String convertToEntityAttribute(String cryptoPassword) {
+        return cryptoPassword;
+    }
     
-    @XmlEnumValue("ADMINISTRADOR")
-    ADMINISTRATOR,
-    
-    @XmlEnumValue("DECANATURA")
-    DEANCHIP,
-    
-    @XmlEnumValue("FACULTAD")
-    FACULTY,
-    
-    @XmlEnumValue("PROGRAMA")
-    PROGRAM
 }
