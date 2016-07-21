@@ -43,6 +43,7 @@ public class TokenUtil {
     public static final String ARG_EMAIL = "email";
     public static final String ARG_USERNAME = "username";
     public static final String ARG_NAME = "name";
+    public static final String ARG_ADMIN = "admin";
     
     private TokenUtil() throws JoseException {
         jsonWebKey = RsaJwkGenerator.generateJwk(2048);
@@ -121,11 +122,14 @@ public class TokenUtil {
         String user = String.valueOf(claims.getClaimValue(ARG_USERNAME));
         String name = String.valueOf(claims.getClaimValue(ARG_NAME));
         String mail = String.valueOf(claims.getClaimValue(ARG_EMAIL));
+        boolean admin = Boolean.valueOf(claims.getClaimValue(ARG_ADMIN)
+                .toString());
         UserInfo userInfo = new UserInfo();
         userInfo.setId(Integer.parseInt(id));
         userInfo.setName(name);
         userInfo.setUsername(user);
         userInfo.setEmail(mail);
+        userInfo.setAdmin(admin);
         return userInfo;
     }
 
@@ -146,6 +150,7 @@ public class TokenUtil {
         claims.setClaim(ARG_NAME, user.getName());
         claims.setClaim(ARG_USERNAME, user.getUsername());
         claims.setClaim(ARG_EMAIL, user.getEmail());
+        claims.setClaim(ARG_ADMIN, user.isAdmin());
         
         return claims;
     }
@@ -162,6 +167,8 @@ public class TokenUtil {
         private String email;
         
         private String name;
+        
+        private boolean admin;
 
         public int getId() {
             return id;
@@ -194,7 +201,15 @@ public class TokenUtil {
         public void setName(String name) {
             this.name = name;
         }
-        
+
+        public boolean isAdmin() {
+            return admin;
+        }
+
+        public void setAdmin(boolean admin) {
+            this.admin = admin;
+        }
+
     }
     
 }
