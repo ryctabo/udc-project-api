@@ -25,15 +25,25 @@ import co.edu.unicartagena.platf.entity.RoleType;
 import co.edu.unicartagena.platf.entity.User;
 import co.edu.unicartagena.platf.entity.UserDetail;
 import co.edu.unicartagena.platf.exception.TokenNotGeneratedException;
+import co.edu.unicartagena.platf.model.MailLoader;
+import co.edu.unicartagena.platf.model.MailSender;
 import co.edu.unicartagena.platf.model.Message;
+import co.edu.unicartagena.platf.model.PinKey;
+import co.edu.unicartagena.platf.model.RegisterKey;
 import co.edu.unicartagena.platf.rest.TokenUtil;
 import co.edu.unicartagena.platf.transfer.UserTransfer;
 
+import java.io.IOException;
+import java.util.Calendar;
 import java.util.List;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.regex.Pattern;
 
+import javax.mail.MessagingException;
 import javax.ws.rs.BadRequestException;
 import javax.ws.rs.NotFoundException;
 import javax.ws.rs.WebApplicationException;
@@ -60,7 +70,7 @@ public class UserServiceImpl implements UserService {
 
     private UserServiceImpl() {
         if (userController.findAll().isEmpty()) {
-            User admin = new UserDetail("Administrator", null, "admin",
+            User admin = new UserDetail("Usuario", "Administrador", "admin",
                     "admin@unicartagena.edu.co", "admin");
             admin.addRoles(RoleType.values());
             userController.save(admin);
@@ -86,7 +96,29 @@ public class UserServiceImpl implements UserService {
         else if (user.getPassword() == null)
             throw new BadRequestException("The user password is required");
         
-        return userController.save(user);
+        UserDetail newUser = (UserDetail) userController.save(user);
+        
+        try {
+            int year = Calendar.getInstance().get(Calendar.YEAR);
+            String mailToSend = new MailLoader("register")
+                .replace(RegisterKey.PERSON_NAME.getName(), newUser.toString())
+                .replace(RegisterKey.EMAIL.getName(), newUser.getEmail())
+                .replace(RegisterKey.PASSWORD.getName(), newUser.getPassword())
+                .replace(RegisterKey.YEAR.getName(), year)
+                .getMail();
+            
+            MailSender.instance()
+                .to(newUser.getEmail())
+                .subject("Bienvenido a UDC Platform")
+                .body(mailToSend, "text/html")
+                .send();
+        } catch (IOException | MessagingException ex) {
+            LOG.log(Level.SEVERE, null, ex);
+            throw new WebApplicationException("Error sending email, "
+                    + ex.getMessage(), ex);
+        }
+        newUser.setPassword(null);
+        return newUser;
     }
 
     /**
@@ -299,6 +331,8 @@ public class UserServiceImpl implements UserService {
                     userInfo.setId(user.getId());
                     userInfo.setUsername(user.getUsername());
                     userInfo.setEmail(user.getEmail());
+                    userInfo.setAdmin(user.getRoles()
+                            .contains(RoleType.ADMINISTRATOR));
                     userInfo.setName(user instanceof UserDetail ?
                             ((UserDetail) user).toString() : null);
                     
@@ -356,7 +390,8 @@ public class UserServiceImpl implements UserService {
             if (email == null || email.isEmpty() || !isEmail(email))
                 throw new BadRequestException("The email is required");
             
-            if (userController.findUserByEmail(email) == null) {
+            UserDetail user = (UserDetail) userController.findUserByEmail(email);
+            if (user == null) {
                 String msg = String.format("This %s email is not registered.",
                         email);
                 throw new BadRequestException(msg);
@@ -366,8 +401,48 @@ public class UserServiceImpl implements UserService {
             while (pinController.findByCode(pin.getCode()) != null)
                 pin.setCode(Pin.generatePinCode());
             
-            pinController.save(pin);
-            //here send message to email
+            final Pin newPin = pinController.save(pin);
+            
+            int year = Calendar.getInstance().get(Calendar.YEAR);
+            String mailToSend = new MailLoader("pin")
+                    .replace(PinKey.PERSON_NAME.getName(), user.toString())
+                    .replace(PinKey.PIN.getName(), pin.getCode())
+                    .replace(PinKey.YEAR.getName(), year)
+                    .getMail();
+            
+            MailSender.instance()
+                    .to(email)
+                    .subject("Recuperación de contraseña")
+                    .body(mailToSend, "text/html")
+                    .send();
+            
+            ScheduledExecutorService sRun = Executors.newScheduledThreadPool(1);
+            sRun.schedule(new Runnable() {
+                @Override
+                public void run() {
+                    pinController.delete(newPin.getId());
+                }
+            }, 15, TimeUnit.MINUTES);
+            sRun.shutdown();
+        } catch (NotCreatedEntityManagerException ex) {
+            LOG.log(Level.SEVERE, null, ex);
+            throw new WebApplicationException("Error generating entity manager "
+                    + "for connecting database.\n" + ex.getMessage(), ex);
+        } catch (IOException | MessagingException ex) {
+            LOG.log(Level.SEVERE, null, ex);
+            throw new WebApplicationException("Error sending email, "
+                    + ex.getMessage(), ex);
+        }
+    }
+
+    @Override
+    public boolean validatePin(String pin, String email) {
+        try {
+            if (email == null || email.isEmpty() || !isEmail(email))
+                throw new BadRequestException("The email is required");
+            if (pin == null || pin.isEmpty())
+                throw new BadRequestException("Pin is required");
+            return pinController.findByCodeAndEmail(pin, email) != null;
         } catch (NotCreatedEntityManagerException ex) {
             LOG.log(Level.SEVERE, null, ex);
             throw new WebApplicationException("Error generating entity manager "

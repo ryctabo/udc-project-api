@@ -18,6 +18,7 @@ package co.edu.unicartagena.platf.rest.resources;
 import co.edu.unicartagena.platf.entity.RoleType;
 import co.edu.unicartagena.platf.entity.UserDetail;
 import co.edu.unicartagena.platf.entity.User;
+import co.edu.unicartagena.platf.model.PasswordGenerator;
 import co.edu.unicartagena.platf.rest.bean.UserFilterBean;
 import co.edu.unicartagena.platf.service.UserService;
 import co.edu.unicartagena.platf.service.UserServiceImpl;
@@ -26,6 +27,7 @@ import co.edu.unicartagena.platf.transfer.UserTransfer;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import javax.ws.rs.BeanParam;
@@ -37,6 +39,7 @@ import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
@@ -49,7 +52,7 @@ import javax.ws.rs.core.UriInfo;
  */
 @Path("users")
 @Consumes(MediaType.APPLICATION_JSON)
-    @Produces(MediaType.APPLICATION_JSON)
+@Produces(MediaType.APPLICATION_JSON)
 public class UserResource {
     
     UserService service = UserServiceImpl.getInstance();
@@ -80,7 +83,14 @@ public class UserResource {
     }
     
     @POST
-    public Response addUser(UserDetail userPerson, @Context UriInfo uriInfo) {
+    public Response addUser(UserDetail userPerson,
+            @QueryParam("gp") boolean generatePassword,
+            @Context UriInfo uriInfo) {
+        LOG.log(Level.INFO, "generatePassword: {0}", generatePassword);
+        if (generatePassword) {
+            String password = PasswordGenerator.getPassword(8);
+            userPerson.setPassword(password);
+        }
         UserDetail newUserPerson = (UserDetail) service.add(userPerson);
         String username = newUserPerson.getUsername();
         URI uri = uriInfo.getAbsolutePathBuilder().path(username).build();

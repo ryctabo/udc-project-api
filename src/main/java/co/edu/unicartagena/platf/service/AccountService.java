@@ -43,5 +43,13 @@ public interface AccountService {
      * @param email
      */
     void sendPin(String email);
+    
+    /**
+     * 
+     * @param pin
+     * @param email
+     * @return 
+     */
+    boolean validatePin(String pin, String email);
 
 }

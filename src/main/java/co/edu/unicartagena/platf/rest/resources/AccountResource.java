@@ -30,6 +30,7 @@ import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
@@ -57,13 +58,22 @@ public class AccountResource {
     }
     
     @GET
+    @Path("pin/{pinCode}")
+    public Message validatePin(@PathParam("pinCode") String pin,
+            @QueryParam("q") String email) {
+        return service.validatePin(pin, email) ?
+                new Message(200, "Pin is valid") : 
+                new Message(200, "Pin is invalid");
+    }
+    
+    @POST
     @Path("pin")
     public Message sendPin(@QueryParam("q") String email) {
         LOG.log(Level.INFO, "Email to send {0}", email);
         service.sendPin(email);
         return new Message(200, String.format("It sent a pin to %s", email));
     }
-
+    
     @POST
     @Path("login")
     public Response authenticate(LoginTransfer loginTransfer) {
