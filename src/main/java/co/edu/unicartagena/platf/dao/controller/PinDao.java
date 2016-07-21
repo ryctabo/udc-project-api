@@ -29,5 +29,8 @@ public interface PinDao extends DataAccessObject<Pin, Integer> {
     
     public Pin findByCode(String code)
             throws NotCreatedEntityManagerException;
+    
+    public Pin findByCodeAndEmail(String pinCode, String email)
+            throws NotCreatedEntityManagerException;
 
 }

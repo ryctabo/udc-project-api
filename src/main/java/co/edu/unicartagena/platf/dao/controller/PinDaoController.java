@@ -40,4 +40,12 @@ public class PinDaoController extends EntityDao<Pin, Integer> implements PinDao 
         return executeNamedQuery("pin.findByCode", params);
     }
 
+    @Override
+    public Pin findByCodeAndEmail(String pinCode, String email)
+            throws NotCreatedEntityManagerException {
+        List<Parameter> params = Arrays.asList(new Parameter("code", pinCode),
+                new Parameter("email", email));
+        return executeNamedQuery("pin.findByCodeAndEmail", params);
+    }
+
 }

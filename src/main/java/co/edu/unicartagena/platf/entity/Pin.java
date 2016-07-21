@@ -34,7 +34,9 @@ import javax.persistence.NamedQuery;
 @Entity
 @NamedQueries({
     @NamedQuery(name = "pin.findByCode",
-            query = "select p from Pin p where p.code = :code")
+            query = "select p from Pin p where p.code = :code"),
+    @NamedQuery(name = "pin.findByCodeAndEmail",
+            query = "select p from Pin p where p.code = :code and p.email = :email")
 })
 public class Pin implements IEntity {
     
