@@ -18,16 +18,19 @@ package co.edu.unicartagena.platf.rest.filters;
 
 import co.edu.unicartagena.platf.model.Message;
 import co.edu.unicartagena.platf.rest.TokenUtil;
+
 import java.io.IOException;
 import java.util.Iterator;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
 import javax.ws.rs.container.ContainerRequestContext;
 import javax.ws.rs.container.ContainerRequestFilter;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.PathSegment;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.ext.Provider;
+
 import org.jose4j.jwt.consumer.InvalidJwtException;
 import org.jose4j.lang.JoseException;
 
@@ -40,38 +43,66 @@ import org.jose4j.lang.JoseException;
 public class LoggingFilter implements ContainerRequestFilter {
 
     private static final String AUTHORIZATION_HEADER = "Authorization";
-    
+
     private static final String AUTHORIZATION_PREFRIX = "Bearer ";
-    
+
     private static final Logger LOG = Logger
             .getLogger(LoggingFilter.class.getName());
-    
+
     @Override
     public void filter(ContainerRequestContext request) throws IOException {
         Iterator<PathSegment> segments = request.getUriInfo()
                 .getPathSegments()
                 .iterator();
-        
-        switch (segments.next().getPath()) {
-            case "accounts": return ;
-        }
-        
+
+        PathSegment segment = segments.next();
+        if ("accounts".equals(segment.getPath()))
+            return ;
+
         String authHeader = request.getHeaderString(AUTHORIZATION_HEADER);
         if (authHeader != null && !authHeader.isEmpty()) {
             String authToken = authHeader.replace(AUTHORIZATION_PREFRIX, "");
-            LOG.log(Level.INFO, "TOKEN: {0}", authToken);
             try {
-                TokenUtil.validateToken(authToken);
-                return ;
+                TokenUtil.UserInfo uInfo = TokenUtil.validateToken(authToken);
+                
+                if (uInfo.isAdmin())
+                    return ;
+                
+                switch (segment.getPath()) {
+                    case "programs":
+                    case "faculties":
+                        abort(request);
+                        return ;
+                    case "users":
+                        switch (request.getMethod()) {
+                            case "GET":
+                            case "PUT":
+                                if (!segments.hasNext()) {
+                                    abort(request);
+                                    return ;
+                                }
+                                String path = segments.next().getPath();
+                                if (path.matches("[0-9]+") &&
+                                        Integer.parseInt(path) == uInfo.getId())
+                                    return ;
+                                if (segments.hasNext() && uInfo.getUsername()
+                                        .equals(segments.next().getPath()))
+                                    return ;
+                                abort(request);
+                        }
+                }
             } catch (JoseException | InvalidJwtException ex) {
                 LOG.log(Level.SEVERE, null, ex);
+                abort(request);
             }
         }
-        
-        request.abortWith(createResponse(Response.Status.UNAUTHORIZED,
-                        "User cannot access the resource."));
     }
-    
+
+    private void abort(ContainerRequestContext request) {
+        request.abortWith(createResponse(Response.Status.UNAUTHORIZED,
+                "User cannot access the resource."));
+    }
+
     private Response createResponse(Response.Status status, String message) {
         return Response.status(status)
                 .type(MediaType.APPLICATION_JSON)
