@@ -95,6 +95,8 @@ public class LoggingFilter implements ContainerRequestFilter {
                 LOG.log(Level.SEVERE, null, ex);
                 abort(request);
             }
+        } else {
+            abort(request);
         }
     }
 
