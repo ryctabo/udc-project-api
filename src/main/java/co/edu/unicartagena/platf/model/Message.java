@@ -61,5 +61,4 @@ public class Message {
         return DOCUMENTATION;
     }
 
-
 }
