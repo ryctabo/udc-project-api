@@ -43,6 +43,8 @@ import org.jose4j.lang.JoseException;
 public class LoggingFilter implements ContainerRequestFilter {
 
     private static final String AUTHORIZATION_HEADER = "Authorization";
+    
+    private static final String AUTHORIZATION_PARAM = "authToken";
 
     private static final String AUTHORIZATION_PREFRIX = "Bearer ";
 
@@ -58,10 +60,18 @@ public class LoggingFilter implements ContainerRequestFilter {
         PathSegment segment = segments.next();
         if ("accounts".equals(segment.getPath()))
             return ;
-
+        
         String authHeader = request.getHeaderString(AUTHORIZATION_HEADER);
+        String authToken;
         if (authHeader != null && !authHeader.isEmpty()) {
-            String authToken = authHeader.replace(AUTHORIZATION_PREFRIX, "");
+            authToken = authHeader.replace(AUTHORIZATION_PREFRIX, "");
+        } else {
+            authToken = request.getUriInfo()
+                    .getQueryParameters()
+                    .getFirst(AUTHORIZATION_PARAM);
+        }
+        
+        if (authToken != null && !authToken.isEmpty()) {
             try {
                 TokenUtil.UserInfo uInfo = TokenUtil.validateToken(authToken);
                 
@@ -71,8 +81,6 @@ public class LoggingFilter implements ContainerRequestFilter {
                 switch (segment.getPath()) {
                     case "programs":
                     case "faculties":
-                        LOG.info(segment.getPath());
-                        LOG.info(request.getMethod());
                         if ("GET".equals(request.getMethod()))
                             return ;
                         abort(request);
