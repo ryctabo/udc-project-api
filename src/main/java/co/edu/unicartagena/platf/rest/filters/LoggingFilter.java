@@ -71,6 +71,10 @@ public class LoggingFilter implements ContainerRequestFilter {
                 switch (segment.getPath()) {
                     case "programs":
                     case "faculties":
+                        LOG.info(segment.getPath());
+                        LOG.info(request.getMethod());
+                        if ("GET".equals(request.getMethod()))
+                            return ;
                         abort(request);
                         return ;
                     case "users":
