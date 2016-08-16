@@ -65,9 +65,9 @@ public class UserResource {
         final List<UserDetail> users = new ArrayList<>();
         List<User> temp;
         if (bean.getRole() != null) {
-            temp = bean.getSize() > 0 ? service.findByRole(RoleType.PROGRAM,
+            temp = bean.getSize() > 0 ? service.findByRole(bean.getRole(),
                     bean.getStart(),
-                    bean.getSize()) : service.findByRole(RoleType.PROGRAM);
+                    bean.getSize()) : service.findByRole(bean.getRole());
         } else {
             temp = bean.getSize() > 0 ? service.getAll(bean.getStart(),
                     bean.getSize()) : service.getAll();
@@ -134,6 +134,14 @@ public class UserResource {
             return Response.ok(person).build();
         }
         return Response.ok(user).build();
+    }
+    
+    @GET
+    @Path("email")
+    public UserDetail getUserByEmail(@QueryParam("q") String email) {
+        User user = service.findByEmail(email);
+        user.setPassword(email);
+        return (UserDetail) user;
     }
     
 }

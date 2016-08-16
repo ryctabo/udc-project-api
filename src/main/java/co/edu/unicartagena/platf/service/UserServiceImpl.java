@@ -96,6 +96,17 @@ public class UserServiceImpl implements UserService {
         else if (user.getPassword() == null)
             throw new BadRequestException("The user password is required");
         
+        try {
+            if (userController.findUserByEmail(user.getEmail()) != null) {
+                String msg = String.format("The user with email %s is "
+                        + "already exists", user.getEmail());
+                throw new BadRequestException(msg);
+            }
+        } catch (NotCreatedEntityManagerException ex) {
+            LOG.log(Level.SEVERE, null, ex);
+            throw new WebApplicationException(ex);
+        }
+        
         UserDetail newUser = (UserDetail) userController.save(user);
         
         try {

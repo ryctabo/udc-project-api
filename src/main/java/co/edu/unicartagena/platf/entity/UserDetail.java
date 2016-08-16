@@ -30,7 +30,7 @@ import javax.xml.bind.annotation.XmlType;
  */
 @Entity
 @XmlRootElement
-@XmlType(propOrder = {"name", "lastName"})
+@XmlType(propOrder = {"name", "lastName", "fullName"})
 @PrimaryKeyJoinColumn(referencedColumnName = "id")
 public class UserDetail extends User {
     
@@ -78,6 +78,11 @@ public class UserDetail extends User {
 
     public void setLastName(String lastName) {
         this.lastName = lastName;
+    }
+    
+    @XmlElement(name = "full_name")
+    public String getFullName() {
+        return this.toString();
     }
 
     @Override
