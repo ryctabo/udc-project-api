@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 rycta.
+ * Copyright 2016 Gustavo Pacheco.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,25 +13,21 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package co.edu.unicartagena.plaf.rest.resources;
+package co.edu.unicartagena.platf.service;
 
-import javax.ws.rs.GET;
-import javax.ws.rs.Path;
-import javax.ws.rs.Produces;
-import javax.ws.rs.core.MediaType;
+import co.edu.unicartagena.platf.entity.Program;
+
+import java.util.List;
 
 /**
  *
- * @author Gustavo Pacheco
- * @version 1.0
+ * @author Gustavo Pacheco <ryctabo@gmail.com>
+ * @version 1.0-SNAPSHOT
  */
-@Path("myresource")
-public class MyResource {
+public interface ProgramService extends Service<Program, Integer> {
     
-    @GET
-    @Produces(MediaType.TEXT_PLAIN)
-    public String test() {
-        return "Got it!";
-    }
+    List<Program> getAllProgramPaginated(int start, int size);
+    
+    List<Program> getAllProgramByFacultyId(Integer facultyId);
     
 }
